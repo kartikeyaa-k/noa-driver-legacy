@@ -1,0 +1,82 @@
+{
+  "project_info": {
+    "project_number": "60492041452",
+    "project_id": "noamarket-e78fa",
+    "storage_bucket": "noamarket-e78fa.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:60492041452:android:a55ae2f61155774b8269c9",
+        "android_client_info": {
+          "package_name": "com.noa.supplier"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "60492041452-kd76hjghfs7lodvp3miqbjrbekcd5ko8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD83TkUKJz2hu6mYNPbMBnGYUGvzUbvys0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "60492041452-kd76hjghfs7lodvp3miqbjrbekcd5ko8.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "60492041452-2mpkil44pdauth2tmtl3ggarc6ahf9tp.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.royex.noa"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:60492041452:android:9d93179bd9a278768269c9",
+        "android_client_info": {
+          "package_name": "com.royex.noa"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "60492041452-kd76hjghfs7lodvp3miqbjrbekcd5ko8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD83TkUKJz2hu6mYNPbMBnGYUGvzUbvys0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "60492041452-kd76hjghfs7lodvp3miqbjrbekcd5ko8.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "60492041452-2mpkil44pdauth2tmtl3ggarc6ahf9tp.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.royex.noa"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
