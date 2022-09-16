@@ -975,7 +975,8 @@ class _HomeState extends State<Home> {
                                               .address ??
                                           '';
 
-                                      var streetName = temp
+                                      var streetName = provider
+                                              .currentOrderList[index]
                                               ?.customerViewModel
                                               ?.customerAddressViewModels
                                               ?.first

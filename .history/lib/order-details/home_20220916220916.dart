@@ -946,50 +946,6 @@ class _HomeState extends State<Home> {
                                     itemCount: provider.previousList.length,
                                     physics: const BouncingScrollPhysics(),
                                     itemBuilder: (ctx, index) {
-                                      var temp = provider.previousList[index];
-                                      var communityId = temp
-                                          ?.customerViewModel
-                                          ?.customerAddressViewModels
-                                          ?.first
-                                          .nearByLocation;
-
-                                      var subCommunityId = temp
-                                          ?.customerViewModel
-                                          ?.customerAddressViewModels
-                                          ?.first
-                                          .buildingName;
-
-                                      var communityName =
-                                          AppHelper.getCommunityNameFromId(
-                                              mainCommunityList, communityId);
-
-                                      var subCommunityName =
-                                          AppHelper.getSubCommunityNameFromId(
-                                              mainSubCommunityList,
-                                              subCommunityId);
-
-                                      var villa = temp
-                                              ?.customerViewModel
-                                              ?.customerAddressViewModels
-                                              ?.first
-                                              .address ??
-                                          '';
-
-                                      var streetName = temp
-                                              ?.customerViewModel
-                                              ?.customerAddressViewModels
-                                              ?.first
-                                              .addressLine2 ??
-                                          '';
-
-                                      var orderAddress = villa +
-                                          ', ' +
-                                          streetName +
-                                          ', ' +
-                                          subCommunityName +
-                                          ', ' +
-                                          communityName;
-
                                       return InkWell(
                                         onTap: () {
                                           // NavUtils.push(context, MyOrderDetails(provider.myorderList[index]!.invoiceDetailsViewModels,provider.myorderList[index]!.invoiceViewModels![0],"","", provider.myorderList[index]!.totalAmount!,provider.myorderList[index]!.invoiceViewModels![0].status!));
@@ -1040,7 +996,7 @@ class _HomeState extends State<Home> {
                                                       ),
                                                       child: Center(
                                                           child: Image.asset(
-                                                        "assets/images/ic-ok-blue.png",
+                                                        "",
                                                         width: 20,
                                                         height: 20,
                                                       )),
@@ -1062,7 +1018,8 @@ class _HomeState extends State<Home> {
                                                         SizedBox(
                                                             width: 150,
                                                             child: Text(
-                                                              orderAddress,
+                                                              "${provider.previousList[index]!.customerViewModel!.customerAddressViewModels?.first.address},"
+                                                              " ${provider.previousList[index]!.customerViewModel!.customerAddressViewModels?.first.addressLine2}, ${provider.previousList[index]!.customerViewModel!.customerAddressViewModels![0].buildingName}",
                                                               style: TextStyle(
                                                                 color: AppColors
                                                                     .gray8383,

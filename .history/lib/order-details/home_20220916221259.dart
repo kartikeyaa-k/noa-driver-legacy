@@ -968,14 +968,16 @@ class _HomeState extends State<Home> {
                                               mainSubCommunityList,
                                               subCommunityId);
 
-                                      var villa = temp
+                                      var villa = provider
+                                              .currentOrderList[index]
                                               ?.customerViewModel
                                               ?.customerAddressViewModels
                                               ?.first
                                               .address ??
                                           '';
 
-                                      var streetName = temp
+                                      var streetName = provider
+                                              .currentOrderList[index]
                                               ?.customerViewModel
                                               ?.customerAddressViewModels
                                               ?.first

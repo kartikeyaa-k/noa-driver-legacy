@@ -946,14 +946,17 @@ class _HomeState extends State<Home> {
                                     itemCount: provider.previousList.length,
                                     physics: const BouncingScrollPhysics(),
                                     itemBuilder: (ctx, index) {
-                                      var temp = provider.previousList[index];
-                                      var communityId = temp
+                                      var temp =
+                                          provider.currentOrderList[index];
+                                      var communityId = provider
+                                          .currentOrderList[index]
                                           ?.customerViewModel
                                           ?.customerAddressViewModels
                                           ?.first
                                           .nearByLocation;
 
-                                      var subCommunityId = temp
+                                      var subCommunityId = provider
+                                          .currentOrderList[index]
                                           ?.customerViewModel
                                           ?.customerAddressViewModels
                                           ?.first
@@ -968,14 +971,16 @@ class _HomeState extends State<Home> {
                                               mainSubCommunityList,
                                               subCommunityId);
 
-                                      var villa = temp
+                                      var villa = provider
+                                              .currentOrderList[index]
                                               ?.customerViewModel
                                               ?.customerAddressViewModels
                                               ?.first
                                               .address ??
                                           '';
 
-                                      var streetName = temp
+                                      var streetName = provider
+                                              .currentOrderList[index]
                                               ?.customerViewModel
                                               ?.customerAddressViewModels
                                               ?.first
