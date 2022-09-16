@@ -1033,19 +1033,19 @@ class _OrderDetailsSingleItemsState extends State<OrderDetailsSingleItems> {
                               var title = 'Noa Market';
                               var body =
                                   'We hope you loved using Noa. For any issues or feedback, please reach out to us on WhatsApp 0585387662 or via email at hello@noa.market.';
-                              // await Provider.of<OrderController>(context,
-                              //         listen: false)
-                              //     .sendNotificationToCustomer(
-                              //         firebaseToken: firebaseToken!,
-                              //         userId: userId,
-                              //         title: title,
-                              //         body: body);
+                              await Provider.of<OrderController>(context,
+                                      listen: false)
+                                  .sendNotificationToCustomer(
+                                      firebaseToken: firebaseToken!,
+                                      userId: userId,
+                                      title: title,
+                                      body: body);
 
-                              await AppHelper.sendNotificationOrderCompleted(
-                                  context: context,
-                                  firebaseToken: firebaseToken!,
-                                  userName: customerName);
-                              Navigator.of(context).pop();
+                              // await AppHelper.sendNotificationOrderCompleted(
+                              //     context: context,
+                              //     firebaseToken: firebaseToken!,
+                              //     userName: customerName);
+                              // Navigator.of(context).pop();
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 getSnackBar(

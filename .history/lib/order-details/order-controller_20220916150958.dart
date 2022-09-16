@@ -67,7 +67,7 @@ class OrderController extends ChangeNotifier {
         if (currentOrderCount > previousOrderCount) {
           // Received new orders, send notification
           previousOrderCount = currentOrderCount;
-          // sendNotificationToDriverForNewOrder(currentOrderList.last!);
+          sendNotificationToDriverForNewOrder(currentOrderList.last!);
         }
       }
     }
@@ -943,7 +943,7 @@ class OrderController extends ChangeNotifier {
       "isSpecificUser": false,
       "onClickAction": "string",
       "subComunityId": subComunityId,
-      "userType": 1
+      "userType": userType
     };
     var response = await _orderRepo.sendNotificationToCustomer(
       requestModel: request,

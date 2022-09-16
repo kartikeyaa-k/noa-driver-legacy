@@ -460,34 +460,10 @@ class _HomeState extends State<Home> {
                                           AppHelper.getCommunityNameFromId(
                                               mainCommunityList, communityId);
 
-                                      var subCommunityName =
+                                      var subCommunityId =
                                           AppHelper.getSubCommunityNameFromId(
                                               mainSubCommunityList,
                                               subCommunityId);
-
-                                      var villa = provider
-                                              .currentOrderList[index]
-                                              ?.customerViewModel
-                                              ?.customerAddressViewModels
-                                              ?.first
-                                              .address ??
-                                          '';
-
-                                      var streetName = provider
-                                              .currentOrderList[index]
-                                              ?.customerViewModel
-                                              ?.customerAddressViewModels
-                                              ?.first
-                                              .addressLine2 ??
-                                          '';
-
-                                      var orderAddress = villa +
-                                          ', ' +
-                                          streetName +
-                                          ', ' +
-                                          subCommunityName +
-                                          ', ' +
-                                          communityName;
 
                                       // if (provider.currentOrderList[index] !=
                                       //     null) {
@@ -593,7 +569,8 @@ class _HomeState extends State<Home> {
                                                         SizedBox(
                                                             width: 150,
                                                             child: Text(
-                                                              orderAddress,
+                                                              "${provider.currentOrderList[index]?.customerViewModel?.customerAddressViewModels?.first.address ?? ""}"
+                                                              ", ${provider.currentOrderList[index]?.customerViewModel?.customerAddressViewModels?.first.addressLine2 ?? ""} ${provider.currentOrderList[index]?.customerViewModel?.customerAddressViewModels![0].addressLine2 ?? ""}",
                                                               style: TextStyle(
                                                                 color: AppColors
                                                                     .gray8383,
@@ -639,30 +616,15 @@ class _HomeState extends State<Home> {
                                                       children: [
                                                         GestureDetector(
                                                           onTap: () {
-                                                            // var lat =
-                                                            //   if (provider
-                                                            //               .currentOrderList[
-                                                            //                   index]!
-                                                            //               .customerLatitued !=
-                                                            //           null &&
-                                                            //       provider
-                                                            //               .currentOrderList[
-                                                            //                   index]!
-                                                            //               .customerLongitued !=
-                                                            //           null) {
-                                                            //     _launchMapsUrl(
-                                                            //         provider
-                                                            //             .currentOrderList[
-                                                            //                 index]!
-                                                            //             .customerLatitued!,
-                                                            //         provider
-                                                            //             .currentOrderList[
-                                                            //                 index]!
-                                                            //             .customerLongitued!);
-                                                            //   } else {
-                                                            _launchMapsTextSearch(
-                                                                orderAddress);
-                                                            // }
+                                                            // _launchMapsUrl(
+                                                            //     provider
+                                                            //         .currentOrderList[
+                                                            //             index]!
+                                                            //         .customerLatitued!,
+                                                            //     provider
+                                                            //         .currentOrderList[
+                                                            //             index]!
+                                                            //         .customerLongitued!);
                                                           },
                                                           child: Container(
                                                             height: 35,
@@ -1454,15 +1416,6 @@ class _HomeState extends State<Home> {
 
   void _launchMapsUrl(double lat, double lon) async {
     var uri = Uri.parse("google.navigation:q=$lat,$lon&mode=d");
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri);
-    } else {
-      throw 'Could not launch $uri';
-    }
-  }
-
-  void _launchMapsTextSearch(String searchText) async {
-    var uri = Uri.parse("google.navigation:q=$searchText&mode=d");
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri);
     } else {

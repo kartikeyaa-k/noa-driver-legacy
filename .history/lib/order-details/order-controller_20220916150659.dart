@@ -67,7 +67,7 @@ class OrderController extends ChangeNotifier {
         if (currentOrderCount > previousOrderCount) {
           // Received new orders, send notification
           previousOrderCount = currentOrderCount;
-          // sendNotificationToDriverForNewOrder(currentOrderList.last!);
+          sendNotificationToDriverForNewOrder(currentOrderList.last!);
         }
       }
     }
@@ -907,8 +907,8 @@ class OrderController extends ChangeNotifier {
     Map<String, dynamic> request = {
       "fireBaseToken": firebaseToken,
       "topic": null,
-      "title": title,
-      "body": body,
+      "title": "test title",
+      "body": "test body",
       "userId": userId,
       "isSpecificUser": true,
       "onClickAction": "string",
@@ -925,7 +925,7 @@ class OrderController extends ChangeNotifier {
 
   Future<bool> sendNotificationToSubCommunityTopic({
     String firebaseToken = '',
-    int? userId,
+    required int userId,
     required String topic,
     required String title,
     required String body,
@@ -935,15 +935,15 @@ class OrderController extends ChangeNotifier {
     int userType = 1,
   }) async {
     Map<String, dynamic> request = {
-      "fireBaseToken": null,
-      "topic": topic,
-      "title": title,
-      "body": body,
-      "userId": null,
-      "isSpecificUser": false,
+      "fireBaseToken": firebaseToken,
+      "topic": null,
+      "title": "test title",
+      "body": "test body",
+      "userId": userId,
+      "isSpecificUser": true,
       "onClickAction": "string",
-      "subComunityId": subComunityId,
-      "userType": 1
+      "subComunityId": 0,
+      "userType": userType
     };
     var response = await _orderRepo.sendNotificationToCustomer(
       requestModel: request,

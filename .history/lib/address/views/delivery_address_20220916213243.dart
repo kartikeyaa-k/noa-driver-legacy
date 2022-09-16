@@ -70,12 +70,7 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
           isCommunityOrSubcommunityLoading = false;
         });
       });
-    } else {
-      setState(() {
-        subCommunityList = mainSubCommunityList;
-        isCommunityOrSubcommunityLoading = false;
-      });
-    }
+    } else {}
 
     super.initState();
   }

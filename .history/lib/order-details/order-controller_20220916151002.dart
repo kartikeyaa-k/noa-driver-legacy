@@ -67,7 +67,7 @@ class OrderController extends ChangeNotifier {
         if (currentOrderCount > previousOrderCount) {
           // Received new orders, send notification
           previousOrderCount = currentOrderCount;
-          // sendNotificationToDriverForNewOrder(currentOrderList.last!);
+          sendNotificationToDriverForNewOrder(currentOrderList.last!);
         }
       }
     }

@@ -212,14 +212,4 @@ class OrderRepository {
       return true;
     }
   }
-
-  Future<bool> sendNotificationToCustomer(
-      {required Map<String, dynamic> requestModel}) async {
-    var apiResponse = await _httpService.postRequest(
-        ApiConstant.SERVER + ApiConstant.SEND_NOTIFICATION_TO_CUSTOMER,
-        data: requestModel);
-
-    var temp = apiResponse;
-    return true;
-  }
 }

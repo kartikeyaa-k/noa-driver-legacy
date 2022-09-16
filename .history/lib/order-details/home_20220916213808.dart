@@ -639,30 +639,25 @@ class _HomeState extends State<Home> {
                                                       children: [
                                                         GestureDetector(
                                                           onTap: () {
-                                                            // var lat =
-                                                            //   if (provider
-                                                            //               .currentOrderList[
-                                                            //                   index]!
-                                                            //               .customerLatitued !=
-                                                            //           null &&
-                                                            //       provider
-                                                            //               .currentOrderList[
-                                                            //                   index]!
-                                                            //               .customerLongitued !=
-                                                            //           null) {
-                                                            //     _launchMapsUrl(
-                                                            //         provider
-                                                            //             .currentOrderList[
-                                                            //                 index]!
-                                                            //             .customerLatitued!,
-                                                            //         provider
-                                                            //             .currentOrderList[
-                                                            //                 index]!
-                                                            //             .customerLongitued!);
-                                                            //   } else {
-                                                            _launchMapsTextSearch(
-                                                                orderAddress);
-                                                            // }
+                                                            if (provider
+                                                                        .currentOrderList[
+                                                                            index]!
+                                                                        .customerLatitued !=
+                                                                    null &&
+                                                                provider
+                                                                        .currentOrderList[
+                                                                            index]!
+                                                                        .customerLongitued !=
+                                                                    null) {}
+                                                            _launchMapsUrl(
+                                                                provider
+                                                                    .currentOrderList[
+                                                                        index]!
+                                                                    .customerLatitued!,
+                                                                provider
+                                                                    .currentOrderList[
+                                                                        index]!
+                                                                    .customerLongitued!);
                                                           },
                                                           child: Container(
                                                             height: 35,
@@ -1454,15 +1449,6 @@ class _HomeState extends State<Home> {
 
   void _launchMapsUrl(double lat, double lon) async {
     var uri = Uri.parse("google.navigation:q=$lat,$lon&mode=d");
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri);
-    } else {
-      throw 'Could not launch $uri';
-    }
-  }
-
-  void _launchMapsTextSearch(String searchText) async {
-    var uri = Uri.parse("google.navigation:q=$searchText&mode=d");
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri);
     } else {

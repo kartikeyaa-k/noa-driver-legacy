@@ -8,8 +8,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:noa_driver/address/views/delivery_address.dart';
 import 'package:noa_driver/app-colors/app-colors.dart';
 import 'package:noa_driver/components/buttons/primary_button.dart';
-import 'package:noa_driver/components/snackbar/primary_snackbar.dart';
-import 'package:noa_driver/core/helpers/app_helpers.dart';
 import 'package:noa_driver/core/style/styles.dart';
 import 'package:noa_driver/drawer/drawer.dart';
 import 'package:noa_driver/login-registration/model/custommer-login.dart';
@@ -93,16 +91,16 @@ class _HomeState extends State<Home> {
   // MAIN FUNCTIONS
 
   Future<void> setNotificationSubscriptionTopics() async {
-    if (widget.driverLogin != null && widget.driverLogin?.supplierId != null) {
-      var supplierId = widget.driverLogin!.supplierId;
-      await messaging.subscribeToTopic(supplierId.toString()).then((value) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          getSnackBar(
-            'Subscribed to receive notifications',
-          ),
-        );
+    if (widget.driverLogin.supplierId != null) {
+      await messaging.subscribeToTopic().then((value) {
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //   getSnackBar(
+        //     'Subscribed to receive notifications',
+        //   ),
+        // );
       });
     }
+    int supplierID = widget.driverLogin.supplierId;
   }
 
   Future<void> setDriverLocation(String? subCommunityId) async {
@@ -134,7 +132,6 @@ class _HomeState extends State<Home> {
     Provider.of<OrderController>(context, listen: false).determinePosition();
     startFetchingOrderDetailsAtInterval();
     setDriverLocation(null);
-    setNotificationSubscriptionTopics();
     Provider.of<OrderController>(context, listen: false)
         .getPreviousOrderedItems(
       widget.driverLogin!.storeId!,
@@ -441,54 +438,6 @@ class _HomeState extends State<Home> {
                                     itemBuilder: (ctx, index) {
                                       var temp =
                                           provider.currentOrderList[index];
-
-                                      var communityId = provider
-                                          .currentOrderList[index]
-                                          ?.customerViewModel
-                                          ?.customerAddressViewModels
-                                          ?.first
-                                          .nearByLocation;
-
-                                      var subCommunityId = provider
-                                          .currentOrderList[index]
-                                          ?.customerViewModel
-                                          ?.customerAddressViewModels
-                                          ?.first
-                                          .buildingName;
-
-                                      var communityName =
-                                          AppHelper.getCommunityNameFromId(
-                                              mainCommunityList, communityId);
-
-                                      var subCommunityName =
-                                          AppHelper.getSubCommunityNameFromId(
-                                              mainSubCommunityList,
-                                              subCommunityId);
-
-                                      var villa = provider
-                                              .currentOrderList[index]
-                                              ?.customerViewModel
-                                              ?.customerAddressViewModels
-                                              ?.first
-                                              .address ??
-                                          '';
-
-                                      var streetName = provider
-                                              .currentOrderList[index]
-                                              ?.customerViewModel
-                                              ?.customerAddressViewModels
-                                              ?.first
-                                              .addressLine2 ??
-                                          '';
-
-                                      var orderAddress = villa +
-                                          ', ' +
-                                          streetName +
-                                          ', ' +
-                                          subCommunityName +
-                                          ', ' +
-                                          communityName;
-
                                       // if (provider.currentOrderList[index] !=
                                       //     null) {
                                       //   if (provider.currentOrderList[index]
@@ -590,20 +539,21 @@ class _HomeState extends State<Home> {
                                                           CrossAxisAlignment
                                                               .start,
                                                       children: [
-                                                        SizedBox(
-                                                            width: 150,
-                                                            child: Text(
-                                                              orderAddress,
-                                                              style: TextStyle(
-                                                                color: AppColors
-                                                                    .gray8383,
-                                                                fontSize: 10,
-                                                              ),
-                                                              maxLines: 2,
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
-                                                            )),
+                                                        // SizedBox(
+                                                        //     width: 150,
+                                                        //     child: Text(
+                                                        //       "${provider.currentOrderList[index]?.customerViewModel?.customerAddressViewModels?.first.address ?? ""}"
+                                                        //       ", ${provider.currentOrderList[index]?.customerViewModel?.customerAddressViewModels?.first.addressLine2 ?? ""} ${provider.currentOrderList[index]?.customerViewModel?.customerAddressViewModels![0].addressLine2 ?? ""}",
+                                                        //       style: TextStyle(
+                                                        //         color: AppColors
+                                                        //             .gray8383,
+                                                        //         fontSize: 10,
+                                                        //       ),
+                                                        //       maxLines: 1,
+                                                        //       overflow:
+                                                        //           TextOverflow
+                                                        //               .ellipsis,
+                                                        //     )),
                                                         const SizedBox(
                                                           height: 5,
                                                         ),
@@ -639,30 +589,15 @@ class _HomeState extends State<Home> {
                                                       children: [
                                                         GestureDetector(
                                                           onTap: () {
-                                                            // var lat =
-                                                            //   if (provider
-                                                            //               .currentOrderList[
-                                                            //                   index]!
-                                                            //               .customerLatitued !=
-                                                            //           null &&
-                                                            //       provider
-                                                            //               .currentOrderList[
-                                                            //                   index]!
-                                                            //               .customerLongitued !=
-                                                            //           null) {
-                                                            //     _launchMapsUrl(
-                                                            //         provider
-                                                            //             .currentOrderList[
-                                                            //                 index]!
-                                                            //             .customerLatitued!,
-                                                            //         provider
-                                                            //             .currentOrderList[
-                                                            //                 index]!
-                                                            //             .customerLongitued!);
-                                                            //   } else {
-                                                            _launchMapsTextSearch(
-                                                                orderAddress);
-                                                            // }
+                                                            // _launchMapsUrl(
+                                                            //     provider
+                                                            //         .currentOrderList[
+                                                            //             index]!
+                                                            //         .customerLatitued!,
+                                                            //     provider
+                                                            //         .currentOrderList[
+                                                            //             index]!
+                                                            //         .customerLongitued!);
                                                           },
                                                           child: Container(
                                                             height: 35,
@@ -1454,15 +1389,6 @@ class _HomeState extends State<Home> {
 
   void _launchMapsUrl(double lat, double lon) async {
     var uri = Uri.parse("google.navigation:q=$lat,$lon&mode=d");
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri);
-    } else {
-      throw 'Could not launch $uri';
-    }
-  }
-
-  void _launchMapsTextSearch(String searchText) async {
-    var uri = Uri.parse("google.navigation:q=$searchText&mode=d");
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri);
     } else {

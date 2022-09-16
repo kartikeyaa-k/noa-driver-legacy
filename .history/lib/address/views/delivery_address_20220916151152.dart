@@ -44,38 +44,23 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
   @override
   void initState() {
     print('Driver : ' + widget.driverId);
-
-    if (mainCommunityList.isEmpty) {
-      Provider.of<AddressController>(context, listen: false)
-          .getAllCommunities()
-          .then((value) {
-        setState(() {
-          communityList = value;
-          isCommunityOrSubcommunityLoading = true;
-        });
-      });
-    } else {
+    Provider.of<AddressController>(context, listen: false)
+        .getAllCommunities()
+        .then((value) {
       setState(() {
-        communityList = mainCommunityList;
+        communityList = value;
         isCommunityOrSubcommunityLoading = true;
       });
-    }
+    });
 
-    if (mainSubCommunityList.isEmpty) {
-      Provider.of<AddressController>(context, listen: false)
-          .getAllSubCommunities()
-          .then((value) {
-        setState(() {
-          subCommunityList = value;
-          isCommunityOrSubcommunityLoading = false;
-        });
-      });
-    } else {
+    Provider.of<AddressController>(context, listen: false)
+        .getAllSubCommunities()
+        .then((value) {
       setState(() {
-        subCommunityList = mainSubCommunityList;
+        subCommunityList = value;
         isCommunityOrSubcommunityLoading = false;
       });
-    }
+    });
 
     super.initState();
   }

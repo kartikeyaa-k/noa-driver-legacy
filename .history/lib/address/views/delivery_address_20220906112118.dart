@@ -44,38 +44,23 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
   @override
   void initState() {
     print('Driver : ' + widget.driverId);
-
-    if (mainCommunityList.isEmpty) {
-      Provider.of<AddressController>(context, listen: false)
-          .getAllCommunities()
-          .then((value) {
-        setState(() {
-          communityList = value;
-          isCommunityOrSubcommunityLoading = true;
-        });
-      });
-    } else {
+    Provider.of<AddressController>(context, listen: false)
+        .getAllCommunities()
+        .then((value) {
       setState(() {
-        communityList = mainCommunityList;
+        communityList = value;
         isCommunityOrSubcommunityLoading = true;
       });
-    }
+    });
 
-    if (mainSubCommunityList.isEmpty) {
-      Provider.of<AddressController>(context, listen: false)
-          .getAllSubCommunities()
-          .then((value) {
-        setState(() {
-          subCommunityList = value;
-          isCommunityOrSubcommunityLoading = false;
-        });
-      });
-    } else {
+    Provider.of<AddressController>(context, listen: false)
+        .getAllSubCommunities()
+        .then((value) {
       setState(() {
-        subCommunityList = mainSubCommunityList;
+        subCommunityList = value;
         isCommunityOrSubcommunityLoading = false;
       });
-    }
+    });
 
     super.initState();
   }
@@ -252,65 +237,34 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
                             provider.custommerLogin?.supplierName;
 
                         var body =
-                            "Our $supplierName is in $subCommunityName right now! \nClick here to purchase and enjoy near instant delivery.";
-                        var title = 'Noa Market';
-                        await Provider.of<OrderController>(context,
-                                listen: false)
-                            .sendNotificationToSubCommunityTopic(
-                                firebaseToken: '',
-                                userId: null,
-                                title: title,
-                                body: body,
-                                subComunityId: int.parse(subCommunityId!),
-                                topic: '/topics/${subCommunityId}')
-                            .then((value) {
-                          if (value) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              getSnackBar(
-                                'Notification sent to all members at $subCommunityName',
-                              ),
-                            );
+                            "Our $supplierName truck is in $subCommunityName right now! \nClick here to purchase and enjoy near instant delivery.";
 
-                            widget.onSubmitAddress(
-                                subCommunityName ?? '',
-                                currentSelectedCommunityName ?? '',
-                                subCommunityId ?? '');
-                            Navigator.of(context).pop();
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              getSnackBar(
-                                'Failed to send notification to members at $subCommunityName',
-                              ),
-                            );
-                          }
+                        await messaging.getToken().then((value) {
+                          provider
+                              .sendPushMessage(
+                                  'Noa Market', body, value!, subCommunityId!)
+                              .then((value) {
+                            if (value) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                getSnackBar(
+                                  'Notification sent to all members at $subCommunityName',
+                                ),
+                              );
+
+                              widget.onSubmitAddress(
+                                  subCommunityName ?? '',
+                                  currentSelectedCommunityName ?? '',
+                                  subCommunityId ?? '');
+                              Navigator.of(context).pop();
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                getSnackBar(
+                                  'Failed to send notification to members at $subCommunityName',
+                                ),
+                              );
+                            }
+                          });
                         });
-
-                        // await messaging.getToken().then((value) {
-                        //   provider
-                        //       .sendPushMessage(
-                        //           'Noa Market', body, value!, subCommunityId!)
-                        //       .then((value) {
-                        //     if (value) {
-                        //       ScaffoldMessenger.of(context).showSnackBar(
-                        //         getSnackBar(
-                        //           'Notification sent to all members at $subCommunityName',
-                        //         ),
-                        //       );
-
-                        //       widget.onSubmitAddress(
-                        //           subCommunityName ?? '',
-                        //           currentSelectedCommunityName ?? '',
-                        //           subCommunityId ?? '');
-                        //       Navigator.of(context).pop();
-                        //     } else {
-                        //       ScaffoldMessenger.of(context).showSnackBar(
-                        //         getSnackBar(
-                        //           'Failed to send notification to members at $subCommunityName',
-                        //         ),
-                        //       );
-                        //     }
-                        //   });
-                        // });
                         // NEW API DID NOT WORK
                         // Provider.of<AddressController>(context, listen: false)
                         //     .sendNotificationToEntireSubCommunity(

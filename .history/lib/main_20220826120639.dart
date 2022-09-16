@@ -5,16 +5,11 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:noa_driver/core/controllers/address_controller.dart';
-import 'package:noa_driver/core/models/communities_model.dart';
-import 'package:noa_driver/core/models/sub_community_model.dart';
 import 'package:noa_driver/splash/splash.dart';
 import 'package:provider/provider.dart';
 import 'locator/locator.dart';
 import 'login-registration/login-controller.dart';
 import 'order-details/order-controller.dart';
-
-List<CommunityModel> mainCommunityList = [];
-List<SubCommunityModel> mainSubCommunityList = [];
 
 late FirebaseMessaging messaging;
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {

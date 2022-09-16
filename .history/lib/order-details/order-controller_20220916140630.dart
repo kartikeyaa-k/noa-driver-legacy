@@ -67,7 +67,7 @@ class OrderController extends ChangeNotifier {
         if (currentOrderCount > previousOrderCount) {
           // Received new orders, send notification
           previousOrderCount = currentOrderCount;
-          // sendNotificationToDriverForNewOrder(currentOrderList.last!);
+          sendNotificationToDriverForNewOrder(currentOrderList.last!);
         }
       }
     }
@@ -893,7 +893,7 @@ class OrderController extends ChangeNotifier {
     }
   }
 
-  Future<bool> sendNotificationToCustomer({
+  void sendNotificationToCustomer({
     required String firebaseToken,
     required int userId,
     String topic = '',
@@ -902,54 +902,21 @@ class OrderController extends ChangeNotifier {
     bool isSpecificUser = true,
     String onClickAction = '',
     int subComunityId = 0,
-    int userType = 1,
-  }) async {
+    int userType = 0,
+  }) {
     Map<String, dynamic> request = {
-      "fireBaseToken": firebaseToken,
-      "topic": null,
-      "title": title,
-      "body": body,
-      "userId": userId,
+      "fireBaseToken": "string",
+      "topic": "string",
+      "title": "string",
+      "body": "string",
+      "userId": 0,
       "isSpecificUser": true,
       "onClickAction": "string",
       "subComunityId": 0,
-      "userType": userType
+      "userType": 0
     };
-    var response = await _orderRepo.sendNotificationToCustomer(
+    var response = _orderRepo.sendNotificationToCustomer(
       requestModel: request,
     );
-
-    var temp = response;
-    return true;
-  }
-
-  Future<bool> sendNotificationToSubCommunityTopic({
-    String firebaseToken = '',
-    int? userId,
-    required String topic,
-    required String title,
-    required String body,
-    bool isSpecificUser = false,
-    String onClickAction = 'screen',
-    required int subComunityId,
-    int userType = 1,
-  }) async {
-    Map<String, dynamic> request = {
-      "fireBaseToken": null,
-      "topic": topic,
-      "title": title,
-      "body": body,
-      "userId": null,
-      "isSpecificUser": false,
-      "onClickAction": "string",
-      "subComunityId": subComunityId,
-      "userType": 1
-    };
-    var response = await _orderRepo.sendNotificationToCustomer(
-      requestModel: request,
-    );
-
-    var temp = response;
-    return true;
   }
 }

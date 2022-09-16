@@ -952,9 +952,9 @@ class _OrderDetailsSingleItemsState extends State<OrderDetailsSingleItems> {
 
                               var userId =
                                   widget.customerViewModel!.customerId!;
-                              var title = 'Hi ${customerName?.toUpperCase()}';
+                              var title = 'Noa Market';
                               var body =
-                                  'Your order has been confirmed. It is on the way to your address';
+                                  'We hope you loved using Noa. For any issues or feedback, please reach out to us on WhatsApp 0585387662 or via email at hello@noa.market.';
                               await Provider.of<OrderController>(context,
                                       listen: false)
                                   .sendNotificationToCustomer(
@@ -963,10 +963,10 @@ class _OrderDetailsSingleItemsState extends State<OrderDetailsSingleItems> {
                                       title: title,
                                       body: body);
 
-                              // await AppHelper.sendNotificationOnTheWay(
-                              //     context: context,
-                              //     firebaseToken: firebaseToken!,
-                              //     userName: customerName);
+                              await AppHelper.sendNotificationOnTheWay(
+                                  context: context,
+                                  firebaseToken: firebaseToken!,
+                                  userName: customerName);
                               // Navigator.of(context).pop();
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
@@ -1033,19 +1033,19 @@ class _OrderDetailsSingleItemsState extends State<OrderDetailsSingleItems> {
                               var title = 'Noa Market';
                               var body =
                                   'We hope you loved using Noa. For any issues or feedback, please reach out to us on WhatsApp 0585387662 or via email at hello@noa.market.';
-                              // await Provider.of<OrderController>(context,
-                              //         listen: false)
-                              //     .sendNotificationToCustomer(
-                              //         firebaseToken: firebaseToken!,
-                              //         userId: userId,
-                              //         title: title,
-                              //         body: body);
+                              await Provider.of<OrderController>(context,
+                                      listen: false)
+                                  .sendNotificationToCustomer(
+                                      firebaseToken: firebaseToken!,
+                                      userId: userId,
+                                      title: title,
+                                      body: body);
 
                               await AppHelper.sendNotificationOrderCompleted(
                                   context: context,
                                   firebaseToken: firebaseToken!,
                                   userName: customerName);
-                              Navigator.of(context).pop();
+                              // Navigator.of(context).pop();
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 getSnackBar(

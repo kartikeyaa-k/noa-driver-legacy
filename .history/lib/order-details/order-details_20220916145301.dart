@@ -955,19 +955,19 @@ class _OrderDetailsSingleItemsState extends State<OrderDetailsSingleItems> {
                               var title = 'Hi ${customerName?.toUpperCase()}';
                               var body =
                                   'Your order has been confirmed. It is on the way to your address';
-                              await Provider.of<OrderController>(context,
-                                      listen: false)
-                                  .sendNotificationToCustomer(
-                                      firebaseToken: firebaseToken!,
-                                      userId: userId,
-                                      title: title,
-                                      body: body);
+                              // await Provider.of<OrderController>(context,
+                              //         listen: false)
+                              //     .sendNotificationToCustomer(
+                              //         firebaseToken: firebaseToken!,
+                              //         userId: userId,
+                              //         title: title,
+                              //         body: body);
 
-                              // await AppHelper.sendNotificationOnTheWay(
-                              //     context: context,
-                              //     firebaseToken: firebaseToken!,
-                              //     userName: customerName);
-                              // Navigator.of(context).pop();
+                              await AppHelper.sendNotificationOnTheWay(
+                                  context: context,
+                                  firebaseToken: firebaseToken!,
+                                  userName: customerName);
+                              Navigator.of(context).pop();
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 getSnackBar(

@@ -1462,7 +1462,8 @@ class _HomeState extends State<Home> {
   }
 
   void _launchMapsTextSearch(String searchText) async {
-    var uri = Uri.parse("google.navigation:q=$searchText&mode=d");
+    var uri = Uri.parse(
+        "  https://maps.googleapis.com/maps/api/place/textsearch/output?$searchText");
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri);
     } else {

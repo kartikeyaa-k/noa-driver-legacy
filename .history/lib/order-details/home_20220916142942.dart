@@ -8,8 +8,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:noa_driver/address/views/delivery_address.dart';
 import 'package:noa_driver/app-colors/app-colors.dart';
 import 'package:noa_driver/components/buttons/primary_button.dart';
-import 'package:noa_driver/components/snackbar/primary_snackbar.dart';
-import 'package:noa_driver/core/helpers/app_helpers.dart';
 import 'package:noa_driver/core/style/styles.dart';
 import 'package:noa_driver/drawer/drawer.dart';
 import 'package:noa_driver/login-registration/model/custommer-login.dart';
@@ -91,20 +89,6 @@ class _HomeState extends State<Home> {
   bool isOnline = false;
 
   // MAIN FUNCTIONS
-
-  Future<void> setNotificationSubscriptionTopics() async {
-    if (widget.driverLogin != null && widget.driverLogin?.supplierId != null) {
-      var supplierId = widget.driverLogin!.supplierId;
-      await messaging.subscribeToTopic(supplierId.toString()).then((value) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          getSnackBar(
-            'Subscribed to receive notifications',
-          ),
-        );
-      });
-    }
-  }
-
   Future<void> setDriverLocation(String? subCommunityId) async {
     print(
         '==================== DRIVER LOCATION UPDATE : Setting driver subcommunity as $subCommunityId ====================');
@@ -113,19 +97,21 @@ class _HomeState extends State<Home> {
   }
 
   void startFetchingOrderDetailsAtInterval() {
-    _timer = Timer.periodic(const Duration(seconds: 10), (timer) {
-      print(
-          '============================================= FETCHING ORDERS AT 10s(${timer.tick}) ===============================================');
-      if (timer.tick > 2) {
-        // Is not the first time
-        Provider.of<OrderController>(context, listen: false)
-            .getCourrentOrder(widget.driverLogin!.storeId!, isFirstTime: false);
-      } else {
-        // first time api call
-        Provider.of<OrderController>(context, listen: false)
-            .getCourrentOrder(widget.driverLogin!.storeId!, isFirstTime: true);
-      }
-    });
+    Provider.of<OrderController>(context, listen: false)
+        .getCourrentOrder(widget.driverLogin!.storeId!, isFirstTime: true);
+    // _timer = Timer.periodic(const Duration(seconds: 10), (timer) {
+    //   print(
+    //       '============================================= FETCHING ORDERS AT 10s(${timer.tick}) ===============================================');
+    //   if (timer.tick > 2) {
+    //     // Is not the first time
+    //     Provider.of<OrderController>(context, listen: false)
+    //         .getCourrentOrder(widget.driverLogin!.storeId!, isFirstTime: false);
+    //   } else {
+    //     // first time api call
+    //     Provider.of<OrderController>(context, listen: false)
+    //         .getCourrentOrder(widget.driverLogin!.storeId!, isFirstTime: true);
+    //   }
+    // });
   }
 
   @override
@@ -134,7 +120,6 @@ class _HomeState extends State<Home> {
     Provider.of<OrderController>(context, listen: false).determinePosition();
     startFetchingOrderDetailsAtInterval();
     setDriverLocation(null);
-    setNotificationSubscriptionTopics();
     Provider.of<OrderController>(context, listen: false)
         .getPreviousOrderedItems(
       widget.driverLogin!.storeId!,
@@ -441,426 +426,398 @@ class _HomeState extends State<Home> {
                                     itemBuilder: (ctx, index) {
                                       var temp =
                                           provider.currentOrderList[index];
-
-                                      var communityId = provider
-                                          .currentOrderList[index]
-                                          ?.customerViewModel
-                                          ?.customerAddressViewModels
-                                          ?.first
-                                          .nearByLocation;
-
-                                      var subCommunityId = provider
-                                          .currentOrderList[index]
-                                          ?.customerViewModel
-                                          ?.customerAddressViewModels
-                                          ?.first
-                                          .buildingName;
-
-                                      var communityName =
-                                          AppHelper.getCommunityNameFromId(
-                                              mainCommunityList, communityId);
-
-                                      var subCommunityName =
-                                          AppHelper.getSubCommunityNameFromId(
-                                              mainSubCommunityList,
-                                              subCommunityId);
-
-                                      var villa = provider
-                                              .currentOrderList[index]
-                                              ?.customerViewModel
-                                              ?.customerAddressViewModels
-                                              ?.first
-                                              .address ??
-                                          '';
-
-                                      var streetName = provider
-                                              .currentOrderList[index]
-                                              ?.customerViewModel
-                                              ?.customerAddressViewModels
-                                              ?.first
-                                              .addressLine2 ??
-                                          '';
-
-                                      var orderAddress = villa +
-                                          ', ' +
-                                          streetName +
-                                          ', ' +
-                                          subCommunityName +
-                                          ', ' +
-                                          communityName;
-
-                                      // if (provider.currentOrderList[index] !=
-                                      //     null) {
-                                      //   if (provider.currentOrderList[index]
-                                      //           ?.customerViewModel !=
-                                      //       null) {
-                                      //     if (provider
-                                      //         .currentOrderList[index]!
-                                      //         .customerViewModel!
-                                      //         .customerAddressViewModels!
-                                      //         .isNotEmpty) {
-                                      //   }
-                                      //   }
-                                      // }
-
-                                      return InkWell(
-                                        onTap: () {
-                                          // NavUtils.push(context, MyOrderDetails(provider.myorderList[index]!.invoiceDetailsViewModels,provider.myorderList[index]!.invoiceViewModels![0],"","", provider.myorderList[index]!.totalAmount!,provider.myorderList[index]!.invoiceViewModels![0].status!));
-                                        },
-                                        child: Column(
-                                          children: [
-                                            Container(
-                                              margin: const EdgeInsets.only(
-                                                  left: 20, right: 20),
-                                              width: double.infinity,
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    const BorderRadius.all(
-                                                        Radius.circular(10)),
-                                                color: AppColors.pureWhite,
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                    color: Colors.grey
-                                                        .withOpacity(0.5),
-                                                    spreadRadius: 1,
-                                                    blurRadius: 2,
-                                                    offset: const Offset(0,
-                                                        1), // changes position of shadow
-                                                  ),
-                                                ],
-                                              ),
+                                      if (provider.currentOrderList[index] !=
+                                          null) {
+                                        if (provider.currentOrderList[index]
+                                                ?.customerViewModel !=
+                                            null) {
+                                          if (provider
+                                              .currentOrderList[index]!
+                                              .customerViewModel!
+                                              .customerAddressViewModels!
+                                              .isNotEmpty) {
+                                            return InkWell(
+                                              onTap: () {
+                                                // NavUtils.push(context, MyOrderDetails(provider.myorderList[index]!.invoiceDetailsViewModels,provider.myorderList[index]!.invoiceViewModels![0],"","", provider.myorderList[index]!.totalAmount!,provider.myorderList[index]!.invoiceViewModels![0].status!));
+                                              },
                                               child: Column(
-                                                mainAxisSize: MainAxisSize.max,
                                                 children: [
-                                                  const SizedBox(
-                                                    height: 8,
-                                                  ),
-                                                  ListTile(
-                                                    leading: Column(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        Container(
-                                                          height: 30,
-                                                          width: 30,
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            borderRadius:
-                                                                const BorderRadius
-                                                                        .all(
-                                                                    Radius.circular(
-                                                                        100)),
-                                                            color: AppColors
-                                                                    .Blue077C9E
-                                                                .withOpacity(
-                                                                    0.3),
-                                                          ),
-                                                          child: Center(
-                                                              child: Text(
-                                                            "#${index + 1}",
-                                                            style: TextStyle(
-                                                                color: AppColors
-                                                                    .Blue077C9E,
-                                                                fontSize: 10,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w600),
-                                                          )),
-                                                        ),
-                                                        Text(
-                                                          "${provider.currentOrderList[index]!.invoiceStatusName} Order",
-                                                          style: TextStyle(
-                                                              color: AppColors
-                                                                  .green00AF17,
-                                                              fontSize: 14,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold),
+                                                  Container(
+                                                    margin:
+                                                        const EdgeInsets.only(
+                                                            left: 20,
+                                                            right: 20),
+                                                    width: double.infinity,
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          const BorderRadius
+                                                                  .all(
+                                                              Radius.circular(
+                                                                  10)),
+                                                      color:
+                                                          AppColors.pureWhite,
+                                                      boxShadow: [
+                                                        BoxShadow(
+                                                          color: Colors.grey
+                                                              .withOpacity(0.5),
+                                                          spreadRadius: 1,
+                                                          blurRadius: 2,
+                                                          offset: const Offset(
+                                                              0,
+                                                              1), // changes position of shadow
                                                         ),
                                                       ],
                                                     ),
-                                                    title: Text(
-                                                      "${provider.currentOrderList[index]!.customerViewModel?.firstLastName?.toUpperCase()}",
-                                                      style:
-                                                          TextStyles.body14x700,
-                                                    ),
-                                                    subtitle: Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
+                                                    child: Column(
+                                                      mainAxisSize:
+                                                          MainAxisSize.max,
                                                       children: [
-                                                        SizedBox(
-                                                            width: 150,
-                                                            child: Text(
-                                                              orderAddress,
-                                                              style: TextStyle(
-                                                                color: AppColors
-                                                                    .gray8383,
-                                                                fontSize: 10,
-                                                              ),
-                                                              maxLines: 2,
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
-                                                            )),
                                                         const SizedBox(
-                                                          height: 5,
+                                                          height: 8,
                                                         ),
-                                                        Text(
-                                                          "Order No : ",
-                                                          style: TextStyle(
-                                                            color: AppColors
-                                                                .gray8383,
-                                                            fontSize: 11,
-                                                          ),
-                                                          maxLines: 2,
-                                                        ),
-                                                        Text(
-                                                          "${provider.currentOrderList[index]?.refNumber}",
-                                                          style: TextStyle(
-                                                              color: AppColors
-                                                                  .gray8383,
-                                                              fontSize: 11,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold),
-                                                          maxLines: 1,
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    trailing: Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        GestureDetector(
-                                                          onTap: () {
-                                                            // var lat =
-                                                            //   if (provider
-                                                            //               .currentOrderList[
-                                                            //                   index]!
-                                                            //               .customerLatitued !=
-                                                            //           null &&
-                                                            //       provider
-                                                            //               .currentOrderList[
-                                                            //                   index]!
-                                                            //               .customerLongitued !=
-                                                            //           null) {
-                                                            //     _launchMapsUrl(
-                                                            //         provider
-                                                            //             .currentOrderList[
-                                                            //                 index]!
-                                                            //             .customerLatitued!,
-                                                            //         provider
-                                                            //             .currentOrderList[
-                                                            //                 index]!
-                                                            //             .customerLongitued!);
-                                                            //   } else {
-                                                            _launchMapsTextSearch(
-                                                                orderAddress);
-                                                            // }
-                                                          },
-                                                          child: Container(
-                                                            height: 35,
-                                                            width: 35,
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              borderRadius:
-                                                                  const BorderRadius
+                                                        ListTile(
+                                                          leading: Column(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              Container(
+                                                                height: 30,
+                                                                width: 30,
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  borderRadius: const BorderRadius
                                                                           .all(
                                                                       Radius.circular(
                                                                           100)),
-                                                              color: AppColors
-                                                                  .pureWhite,
-                                                              boxShadow: [
-                                                                BoxShadow(
-                                                                  color: Colors
-                                                                      .grey
+                                                                  color: AppColors
+                                                                          .Blue077C9E
                                                                       .withOpacity(
-                                                                          0.5),
-                                                                  spreadRadius:
-                                                                      3,
-                                                                  blurRadius: 2,
-                                                                  offset: const Offset(
-                                                                      0,
-                                                                      1), // changes position of shadow
+                                                                          0.3),
                                                                 ),
-                                                              ],
-                                                            ),
-                                                            child: Center(
-                                                                child: Image.asset(
-                                                                    "assets/images/google-maps.png")),
-                                                          ),
-                                                        ),
-                                                        const SizedBox(
-                                                          height: 2,
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-
-                                                  Divider(
-                                                    color: AppColors.grayDBDBDB,
-                                                    thickness: 1,
-                                                  ),
-                                                  Text(
-                                                    DateTimeUtil
-                                                        .getFormatedDateTimeFromServerFormat(
-                                                            provider
-                                                                .currentOrderList[
-                                                                    index]!
-                                                                .invoiceDate!),
-                                                    style: TextStyle(
-                                                        color:
-                                                            AppColors.gray8383,
-                                                        fontSize: 10,
-                                                        fontWeight:
-                                                            FontWeight.w600),
-                                                  ),
-                                                  Row(
-                                                    mainAxisSize:
-                                                        MainAxisSize.min,
-                                                    children: [
-                                                      Flexible(
-                                                        child: FittedBox(
-                                                          child: RichText(
-                                                              text: TextSpan(
-                                                                  children: [
-                                                                TextSpan(
-                                                                  text:
-                                                                      "Total Price: ",
-                                                                  style: TextStyle(
-                                                                      color: AppColors
-                                                                          .defaultblack,
-                                                                      fontSize:
-                                                                          14,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w600),
-                                                                ),
-                                                                TextSpan(
-                                                                  text: " AED ",
-                                                                  style:
-                                                                      TextStyle(
-                                                                    color: AppColors
-                                                                        .Blue077C9E,
-                                                                    fontSize:
-                                                                        14,
-                                                                  ),
-                                                                ),
-                                                                TextSpan(
-                                                                  text:
-                                                                      "${provider.currentOrderList[index]?.totalAmount?.toStringAsFixed(2)} ",
+                                                                child: Center(
+                                                                    child: Text(
+                                                                  "#${index + 1}",
                                                                   style: TextStyle(
                                                                       color: AppColors
                                                                           .Blue077C9E,
                                                                       fontSize:
-                                                                          22,
+                                                                          10,
                                                                       fontWeight:
                                                                           FontWeight
-                                                                              .bold),
+                                                                              .w600),
+                                                                )),
+                                                              ),
+                                                              Text(
+                                                                "${provider.currentOrderList[index]!.invoiceStatusName} Order",
+                                                                style: TextStyle(
+                                                                    color: AppColors
+                                                                        .green00AF17,
+                                                                    fontSize:
+                                                                        14,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          title: Text(
+                                                            "${provider.currentOrderList[index]!.customerViewModel!.firstLastName?.toUpperCase()}",
+                                                            style: TextStyles
+                                                                .body14x700,
+                                                          ),
+                                                          subtitle: Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              SizedBox(
+                                                                  width: 150,
+                                                                  child: Text(
+                                                                    "${provider.currentOrderList[index]!.customerViewModel!.customerAddressViewModels?.first.address ?? ""}"
+                                                                    ", ${provider.currentOrderList[index]!.customerViewModel!.customerAddressViewModels?.first.addressLine2 ?? ""} ${provider.currentOrderList[index]!.customerViewModel!.customerAddressViewModels![0].addressLine2 ?? ""}",
+                                                                    style:
+                                                                        TextStyle(
+                                                                      color: AppColors
+                                                                          .gray8383,
+                                                                      fontSize:
+                                                                          10,
+                                                                    ),
+                                                                    maxLines: 1,
+                                                                    overflow:
+                                                                        TextOverflow
+                                                                            .ellipsis,
+                                                                  )),
+                                                              const SizedBox(
+                                                                height: 5,
+                                                              ),
+                                                              Text(
+                                                                "Order No : ",
+                                                                style:
+                                                                    TextStyle(
+                                                                  color: AppColors
+                                                                      .gray8383,
+                                                                  fontSize: 11,
                                                                 ),
-                                                              ])),
+                                                                maxLines: 2,
+                                                              ),
+                                                              Text(
+                                                                "${provider.currentOrderList[index]!.refNumber}",
+                                                                style: TextStyle(
+                                                                    color: AppColors
+                                                                        .gray8383,
+                                                                    fontSize:
+                                                                        11,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold),
+                                                                maxLines: 1,
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          trailing: Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              GestureDetector(
+                                                                onTap: () {
+                                                                  _launchMapsUrl(
+                                                                      provider
+                                                                          .currentOrderList[
+                                                                              index]!
+                                                                          .customerLatitued!,
+                                                                      provider
+                                                                          .currentOrderList[
+                                                                              index]!
+                                                                          .customerLongitued!);
+                                                                },
+                                                                child:
+                                                                    Container(
+                                                                  height: 35,
+                                                                  width: 35,
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    borderRadius: const BorderRadius
+                                                                            .all(
+                                                                        Radius.circular(
+                                                                            100)),
+                                                                    color: AppColors
+                                                                        .pureWhite,
+                                                                    boxShadow: [
+                                                                      BoxShadow(
+                                                                        color: Colors
+                                                                            .grey
+                                                                            .withOpacity(0.5),
+                                                                        spreadRadius:
+                                                                            3,
+                                                                        blurRadius:
+                                                                            2,
+                                                                        offset: const Offset(
+                                                                            0,
+                                                                            1), // changes position of shadow
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                  child: Center(
+                                                                      child: Image
+                                                                          .asset(
+                                                                              "assets/images/google-maps.png")),
+                                                                ),
+                                                              ),
+                                                              const SizedBox(
+                                                                height: 2,
+                                                              ),
+                                                            ],
+                                                          ),
                                                         ),
-                                                      ),
-                                                      const SizedBox(
-                                                        width: 5,
-                                                      ),
-                                                      GestureDetector(
-                                                          onTap: () {
-                                                            makeCall(provider
-                                                                .currentOrderList[
-                                                                    index]!
-                                                                .customerViewModel!
-                                                                .phoneNo!);
-                                                          },
-                                                          child: Image.asset(
-                                                            "assets/images/ic-call.png",
-                                                            width: 22,
-                                                            height: 22,
-                                                          )),
-                                                    ],
-                                                  ),
-                                                  const SizedBox(height: 8),
-                                                  Padding(
-                                                    padding: const EdgeInsets
-                                                            .symmetric(
-                                                        horizontal: 24),
-                                                    child: PrimaryButton(
-                                                      height: 34,
-                                                      textStyle: TextStyles
-                                                          .body12x500
-                                                          .copyWith(
-                                                              color: Paints
-                                                                  .primary),
-                                                      onTap: () async {
+                                                        // ListTile(
+                                                        //   leading: Text(
+                                                        //     provider
+                                                        //                 .currentOrderList[
+                                                        //                     index]!
+                                                        //                 .paymentStatus ==
+                                                        //             1
+                                                        //         ? "Online\nPayment"
+                                                        //         : "",
+                                                        //     style: TextStyle(
+                                                        //       color: AppColors
+                                                        //           .Blue077C9E,
+                                                        //       fontSize: 10,
+                                                        //       fontWeight:
+                                                        //           FontWeight.w600,
+                                                        //     ),
+                                                        //     textAlign:
+                                                        //         TextAlign.center,
+                                                        //   ),
+                                                        //   trailing: Text(
+                                                        //     provider
+                                                        //             .currentOrderList[
+                                                        //                 index]!
+                                                        //             .distance ??
+                                                        //         "",
+                                                        //     style: TextStyle(
+                                                        //         color: AppColors
+                                                        //             .pureBlack,
+                                                        //         fontSize: 10,
+                                                        //         fontWeight:
+                                                        //             FontWeight.bold),
+                                                        //   ),
+                                                        // ),
+                                                        Divider(
+                                                          color: AppColors
+                                                              .grayDBDBDB,
+                                                          thickness: 1,
+                                                        ),
+                                                        Text(
+                                                          DateTimeUtil.getFormatedDateTimeFromServerFormat(
+                                                              provider
+                                                                  .currentOrderList[
+                                                                      index]!
+                                                                  .invoiceDate!),
+                                                          style: TextStyle(
+                                                              color: AppColors
+                                                                  .gray8383,
+                                                              fontSize: 10,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600),
+                                                        ),
+                                                        Row(
+                                                          mainAxisSize:
+                                                              MainAxisSize.min,
+                                                          children: [
+                                                            Flexible(
+                                                              child: FittedBox(
+                                                                child: RichText(
+                                                                    text: TextSpan(
+                                                                        children: [
+                                                                      TextSpan(
+                                                                        text:
+                                                                            "Total Price: ",
+                                                                        style: TextStyle(
+                                                                            color: AppColors
+                                                                                .defaultblack,
+                                                                            fontSize:
+                                                                                14,
+                                                                            fontWeight:
+                                                                                FontWeight.w600),
+                                                                      ),
+                                                                      TextSpan(
+                                                                        text:
+                                                                            " AED ",
+                                                                        style:
+                                                                            TextStyle(
+                                                                          color:
+                                                                              AppColors.Blue077C9E,
+                                                                          fontSize:
+                                                                              14,
+                                                                        ),
+                                                                      ),
+                                                                      TextSpan(
+                                                                        text:
+                                                                            "${provider.currentOrderList[index]!.totalAmount} ",
+                                                                        style: TextStyle(
+                                                                            color: AppColors
+                                                                                .Blue077C9E,
+                                                                            fontSize:
+                                                                                22,
+                                                                            fontWeight:
+                                                                                FontWeight.bold),
+                                                                      ),
+                                                                    ])),
+                                                              ),
+                                                            ),
+                                                            const SizedBox(
+                                                              width: 5,
+                                                            ),
+                                                            GestureDetector(
+                                                                onTap: () {
+                                                                  makeCall(provider
+                                                                      .currentOrderList[
+                                                                          index]!
+                                                                      .customerViewModel!
+                                                                      .phoneNo!);
+                                                                },
+                                                                child:
+                                                                    Image.asset(
+                                                                  "assets/images/ic-call.png",
+                                                                  width: 22,
+                                                                  height: 22,
+                                                                )),
+                                                          ],
+                                                        ),
+                                                        const SizedBox(
+                                                            height: 8),
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                      .symmetric(
+                                                                  horizontal:
+                                                                      24),
+                                                          child: PrimaryButton(
+                                                            height: 34,
+                                                            textStyle: TextStyles
+                                                                .body12x500
+                                                                .copyWith(
+                                                                    color: Paints
+                                                                        .primary),
+                                                            onTap: () async {
 // Get Order details first
-                                                        var invoiceID = provider
-                                                            .currentOrderList[
-                                                                index]!
-                                                            .invoiceId;
+                                                              var invoiceID = provider
+                                                                  .currentOrderList[
+                                                                      index]!
+                                                                  .invoiceId;
 
-                                                        await Provider.of<
-                                                                    OrderController>(
-                                                                context,
-                                                                listen: false)
-                                                            .getOrderDetails(
-                                                                '0',
-                                                                invoiceID
-                                                                    .toString())
-                                                            .then(
-                                                                (currentOrder) {
-                                                          Navigator.of(context)
-                                                              .push(
-                                                                MaterialPageRoute(
-                                                                    builder: (_) =>
-                                                                        OrderDetailsSingleItems(
-                                                                          provider
-                                                                              .currentOrderList[index]!
-                                                                              .customerViewModel,
-                                                                          provider
-                                                                              .currentOrderList[index]!
-                                                                              .totalAmount!
-                                                                              .toDouble(),
-                                                                          provider
-                                                                              .currentOrderList[index]!
-                                                                              .refNumber,
-                                                                          "${provider.currentOrderList[index]!.paymentStatus ?? "0"}",
-                                                                          index,
-                                                                          provider
-                                                                              .currentOrderList[index]!
-                                                                              .invoiceId,
-                                                                          preOrCurrent:
-                                                                              "Curr",
-                                                                          invoiceStatus: provider
-                                                                              .currentOrderList[index]!
-                                                                              .invoiceStatusName,
-                                                                          firebaseToken: provider
-                                                                              .currentOrderList[index]!
-                                                                              .remark,
-                                                                        )),
-                                                              )
-                                                              .then((val) => val
-                                                                  ? _getRequests()
-                                                                  : null);
-                                                        });
+                                                              await Provider.of<
+                                                                          OrderController>(
+                                                                      context,
+                                                                      listen:
+                                                                          false)
+                                                                  .getOrderDetails(
+                                                                      '0',
+                                                                      invoiceID
+                                                                          .toString())
+                                                                  .then(
+                                                                      (currentOrder) {
+                                                                Navigator.of(
+                                                                        context)
+                                                                    .push(
+                                                                      MaterialPageRoute(
+                                                                          builder: (_) =>
+                                                                              OrderDetailsSingleItems(
+                                                                                provider.currentOrderList[index]!.customerViewModel,
+                                                                                provider.currentOrderList[index]!.totalAmount!.toDouble(),
+                                                                                provider.currentOrderList[index]!.refNumber,
+                                                                                "${provider.currentOrderList[index]!.paymentStatus ?? "0"}",
+                                                                                index,
+                                                                                provider.currentOrderList[index]!.invoiceId,
+                                                                                preOrCurrent: "Curr",
+                                                                                invoiceStatus: provider.currentOrderList[index]!.invoiceStatusName,
+                                                                                firebaseToken: provider.currentOrderList[index]!.remark,
+                                                                              )),
+                                                                    )
+                                                                    .then((val) => val
+                                                                        ? _getRequests()
+                                                                        : null);
+                                                              });
 
-                                                        /*  NavUtils.push(context, OrderDetailsSingleItems(provider.currentOrderList[index]!.customerViewModel,provider.currentOrderList[index]!.totalAmount!.toDouble(),provider.currentOrderList[index]!.refNumber,"${provider.currentOrderList[index]!.paymentStatus!=null?provider.currentOrderList[index]!.paymentStatus:"0"}",index,provider.currentOrderList[index]!.invoiceId,
+                                                              /*  NavUtils.push(context, OrderDetailsSingleItems(provider.currentOrderList[index]!.customerViewModel,provider.currentOrderList[index]!.totalAmount!.toDouble(),provider.currentOrderList[index]!.refNumber,"${provider.currentOrderList[index]!.paymentStatus!=null?provider.currentOrderList[index]!.paymentStatus:"0"}",index,provider.currentOrderList[index]!.invoiceId,
                                                 preOrCurrent: "Curr",
                                                 invoiceStatus: provider.currentOrderList[index]!.invoiceStatusName,));*/
-                                                      },
-                                                      text: 'View Order',
-                                                      backgroundColor:
-                                                          Paints.primaryBlue,
-                                                    ),
-                                                  ),
-                                                  const SizedBox(
-                                                    height: 8,
-                                                  ),
+                                                            },
+                                                            text: 'View Order',
+                                                            backgroundColor:
+                                                                Paints
+                                                                    .primaryBlue,
+                                                          ),
+                                                        ),
+                                                        const SizedBox(
+                                                          height: 8,
+                                                        ),
 //                                                   Padding(
 //                                                     padding: const EdgeInsets
 //                                                             .symmetric(
@@ -911,18 +868,21 @@ class _HomeState extends State<Home> {
 //                                                         text: 'Update Order'),
 //                                                   ),
 
-                                                  // const SizedBox(
-                                                  //   height: 16,
-                                                  // ),
+                                                        // const SizedBox(
+                                                        //   height: 16,
+                                                        // ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  const SizedBox(
+                                                    height: 10,
+                                                  ),
                                                 ],
                                               ),
-                                            ),
-                                            const SizedBox(
-                                              height: 10,
-                                            ),
-                                          ],
-                                        ),
-                                      );
+                                            );
+                                          }
+                                        }
+                                      }
 
                                       return Container(
                                         height: 20,
@@ -1454,15 +1414,6 @@ class _HomeState extends State<Home> {
 
   void _launchMapsUrl(double lat, double lon) async {
     var uri = Uri.parse("google.navigation:q=$lat,$lon&mode=d");
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri);
-    } else {
-      throw 'Could not launch $uri';
-    }
-  }
-
-  void _launchMapsTextSearch(String searchText) async {
-    var uri = Uri.parse("google.navigation:q=$searchText&mode=d");
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri);
     } else {

@@ -67,7 +67,7 @@ class OrderController extends ChangeNotifier {
         if (currentOrderCount > previousOrderCount) {
           // Received new orders, send notification
           previousOrderCount = currentOrderCount;
-          // sendNotificationToDriverForNewOrder(currentOrderList.last!);
+          sendNotificationToDriverForNewOrder(currentOrderList.last!);
         }
       }
     }
@@ -854,102 +854,5 @@ class OrderController extends ChangeNotifier {
       ],
       inputFieldValueRequestModels: [],
     );
-  }
-
-  Future<bool> sendNotificationPrimary({
-    required String body,
-    required String title,
-    required String firebaseToken,
-    required String topic,
-    required bool isToSpecificCustomer,
-  }) async {
-    try {
-      var res = await http.post(
-        Uri.parse('https://fcm.googleapis.com/fcm/send'),
-        headers: <String, String>{
-          'Content-Type': 'application/json',
-          'Authorization':
-              'key=AAAADhWbTOw:APA91bGE9Zfw0Sa2xppG8-r1c6RIXklMpziMAabdnEdJN4zjC-WWlitUHKpd6CoNNmT5_kqZZN7ywVi9eobOVa6ZP_bTTAQrWXNhqcFZzzzzd3pe3vzsSCaTxKe9vTLD9W5W3Te5FDJJ',
-        },
-        body: jsonEncode(
-          <String, dynamic>{
-            'notification': <String, dynamic>{
-              'body': body,
-              'title': title,
-            },
-            'priority': 'high',
-            'data': <String, dynamic>{
-              'click_action': 'FLUTTER_NOTIFICATION_CLICK',
-              'id': '1',
-              'status': 'done'
-            },
-            "to": isToSpecificCustomer ? firebaseToken : topic
-          },
-        ),
-      );
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  Future<bool> sendNotificationToCustomer({
-    required String firebaseToken,
-    required int userId,
-    String topic = '',
-    required String title,
-    required String body,
-    bool isSpecificUser = true,
-    String onClickAction = '',
-    int subComunityId = 0,
-    int userType = 1,
-  }) async {
-    Map<String, dynamic> request = {
-      "fireBaseToken": firebaseToken,
-      "topic": null,
-      "title": title,
-      "body": body,
-      "userId": userId,
-      "isSpecificUser": true,
-      "onClickAction": "string",
-      "subComunityId": 0,
-      "userType": userType
-    };
-    var response = await _orderRepo.sendNotificationToCustomer(
-      requestModel: request,
-    );
-
-    var temp = response;
-    return true;
-  }
-
-  Future<bool> sendNotificationToSubCommunityTopic({
-    String firebaseToken = '',
-    int? userId,
-    required String topic,
-    required String title,
-    required String body,
-    bool isSpecificUser = false,
-    String onClickAction = 'screen',
-    required int subComunityId,
-    int userType = 1,
-  }) async {
-    Map<String, dynamic> request = {
-      "fireBaseToken": null,
-      "topic": topic,
-      "title": title,
-      "body": body,
-      "userId": null,
-      "isSpecificUser": false,
-      "onClickAction": "string",
-      "subComunityId": subComunityId,
-      "userType": 1
-    };
-    var response = await _orderRepo.sendNotificationToCustomer(
-      requestModel: request,
-    );
-
-    var temp = response;
-    return true;
   }
 }

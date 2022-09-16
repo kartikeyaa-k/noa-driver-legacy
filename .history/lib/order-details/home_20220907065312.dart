@@ -8,8 +8,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:noa_driver/address/views/delivery_address.dart';
 import 'package:noa_driver/app-colors/app-colors.dart';
 import 'package:noa_driver/components/buttons/primary_button.dart';
-import 'package:noa_driver/components/snackbar/primary_snackbar.dart';
-import 'package:noa_driver/core/helpers/app_helpers.dart';
 import 'package:noa_driver/core/style/styles.dart';
 import 'package:noa_driver/drawer/drawer.dart';
 import 'package:noa_driver/login-registration/model/custommer-login.dart';
@@ -91,20 +89,6 @@ class _HomeState extends State<Home> {
   bool isOnline = false;
 
   // MAIN FUNCTIONS
-
-  Future<void> setNotificationSubscriptionTopics() async {
-    if (widget.driverLogin != null && widget.driverLogin?.supplierId != null) {
-      var supplierId = widget.driverLogin!.supplierId;
-      await messaging.subscribeToTopic(supplierId.toString()).then((value) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          getSnackBar(
-            'Subscribed to receive notifications',
-          ),
-        );
-      });
-    }
-  }
-
   Future<void> setDriverLocation(String? subCommunityId) async {
     print(
         '==================== DRIVER LOCATION UPDATE : Setting driver subcommunity as $subCommunityId ====================');
@@ -134,7 +118,6 @@ class _HomeState extends State<Home> {
     Provider.of<OrderController>(context, listen: false).determinePosition();
     startFetchingOrderDetailsAtInterval();
     setDriverLocation(null);
-    setNotificationSubscriptionTopics();
     Provider.of<OrderController>(context, listen: false)
         .getPreviousOrderedItems(
       widget.driverLogin!.storeId!,
@@ -439,70 +422,6 @@ class _HomeState extends State<Home> {
                                     itemCount: provider.currentOrderList.length,
                                     physics: const BouncingScrollPhysics(),
                                     itemBuilder: (ctx, index) {
-                                      var temp =
-                                          provider.currentOrderList[index];
-
-                                      var communityId = provider
-                                          .currentOrderList[index]
-                                          ?.customerViewModel
-                                          ?.customerAddressViewModels
-                                          ?.first
-                                          .nearByLocation;
-
-                                      var subCommunityId = provider
-                                          .currentOrderList[index]
-                                          ?.customerViewModel
-                                          ?.customerAddressViewModels
-                                          ?.first
-                                          .buildingName;
-
-                                      var communityName =
-                                          AppHelper.getCommunityNameFromId(
-                                              mainCommunityList, communityId);
-
-                                      var subCommunityName =
-                                          AppHelper.getSubCommunityNameFromId(
-                                              mainSubCommunityList,
-                                              subCommunityId);
-
-                                      var villa = provider
-                                              .currentOrderList[index]
-                                              ?.customerViewModel
-                                              ?.customerAddressViewModels
-                                              ?.first
-                                              .address ??
-                                          '';
-
-                                      var streetName = provider
-                                              .currentOrderList[index]
-                                              ?.customerViewModel
-                                              ?.customerAddressViewModels
-                                              ?.first
-                                              .addressLine2 ??
-                                          '';
-
-                                      var orderAddress = villa +
-                                          ', ' +
-                                          streetName +
-                                          ', ' +
-                                          subCommunityName +
-                                          ', ' +
-                                          communityName;
-
-                                      // if (provider.currentOrderList[index] !=
-                                      //     null) {
-                                      //   if (provider.currentOrderList[index]
-                                      //           ?.customerViewModel !=
-                                      //       null) {
-                                      //     if (provider
-                                      //         .currentOrderList[index]!
-                                      //         .customerViewModel!
-                                      //         .customerAddressViewModels!
-                                      //         .isNotEmpty) {
-                                      //   }
-                                      //   }
-                                      // }
-
                                       return InkWell(
                                         onTap: () {
                                           // NavUtils.push(context, MyOrderDetails(provider.myorderList[index]!.invoiceDetailsViewModels,provider.myorderList[index]!.invoiceViewModels![0],"","", provider.myorderList[index]!.totalAmount!,provider.myorderList[index]!.invoiceViewModels![0].status!));
@@ -581,7 +500,7 @@ class _HomeState extends State<Home> {
                                                       ],
                                                     ),
                                                     title: Text(
-                                                      "${provider.currentOrderList[index]!.customerViewModel?.firstLastName?.toUpperCase()}",
+                                                      "${provider.currentOrderList[index]!.customerViewModel!.firstLastName?.toUpperCase()}",
                                                       style:
                                                           TextStyles.body14x700,
                                                     ),
@@ -593,13 +512,14 @@ class _HomeState extends State<Home> {
                                                         SizedBox(
                                                             width: 150,
                                                             child: Text(
-                                                              orderAddress,
+                                                              "${provider.currentOrderList[index]!.customerViewModel!.customerAddressViewModels![0].address ?? ""}"
+                                                              ", ${provider.currentOrderList[index]!.customerViewModel!.customerAddressViewModels![0].addressLine2 ?? ""} ${provider.currentOrderList[index]!.customerViewModel!.customerAddressViewModels![0].addressLine2 ?? ""}",
                                                               style: TextStyle(
                                                                 color: AppColors
                                                                     .gray8383,
                                                                 fontSize: 10,
                                                               ),
-                                                              maxLines: 2,
+                                                              maxLines: 1,
                                                               overflow:
                                                                   TextOverflow
                                                                       .ellipsis,
@@ -617,7 +537,7 @@ class _HomeState extends State<Home> {
                                                           maxLines: 2,
                                                         ),
                                                         Text(
-                                                          "${provider.currentOrderList[index]?.refNumber}",
+                                                          "${provider.currentOrderList[index]!.refNumber}",
                                                           style: TextStyle(
                                                               color: AppColors
                                                                   .gray8383,
@@ -639,30 +559,15 @@ class _HomeState extends State<Home> {
                                                       children: [
                                                         GestureDetector(
                                                           onTap: () {
-                                                            // var lat =
-                                                            //   if (provider
-                                                            //               .currentOrderList[
-                                                            //                   index]!
-                                                            //               .customerLatitued !=
-                                                            //           null &&
-                                                            //       provider
-                                                            //               .currentOrderList[
-                                                            //                   index]!
-                                                            //               .customerLongitued !=
-                                                            //           null) {
-                                                            //     _launchMapsUrl(
-                                                            //         provider
-                                                            //             .currentOrderList[
-                                                            //                 index]!
-                                                            //             .customerLatitued!,
-                                                            //         provider
-                                                            //             .currentOrderList[
-                                                            //                 index]!
-                                                            //             .customerLongitued!);
-                                                            //   } else {
-                                                            _launchMapsTextSearch(
-                                                                orderAddress);
-                                                            // }
+                                                            _launchMapsUrl(
+                                                                provider
+                                                                    .currentOrderList[
+                                                                        index]!
+                                                                    .customerLatitued!,
+                                                                provider
+                                                                    .currentOrderList[
+                                                                        index]!
+                                                                    .customerLongitued!);
                                                           },
                                                           child: Container(
                                                             height: 35,
@@ -702,7 +607,39 @@ class _HomeState extends State<Home> {
                                                       ],
                                                     ),
                                                   ),
-
+                                                  // ListTile(
+                                                  //   leading: Text(
+                                                  //     provider
+                                                  //                 .currentOrderList[
+                                                  //                     index]!
+                                                  //                 .paymentStatus ==
+                                                  //             1
+                                                  //         ? "Online\nPayment"
+                                                  //         : "",
+                                                  //     style: TextStyle(
+                                                  //       color: AppColors
+                                                  //           .Blue077C9E,
+                                                  //       fontSize: 10,
+                                                  //       fontWeight:
+                                                  //           FontWeight.w600,
+                                                  //     ),
+                                                  //     textAlign:
+                                                  //         TextAlign.center,
+                                                  //   ),
+                                                  //   trailing: Text(
+                                                  //     provider
+                                                  //             .currentOrderList[
+                                                  //                 index]!
+                                                  //             .distance ??
+                                                  //         "",
+                                                  //     style: TextStyle(
+                                                  //         color: AppColors
+                                                  //             .pureBlack,
+                                                  //         fontSize: 10,
+                                                  //         fontWeight:
+                                                  //             FontWeight.bold),
+                                                  //   ),
+                                                  // ),
                                                   Divider(
                                                     color: AppColors.grayDBDBDB,
                                                     thickness: 1,
@@ -754,7 +691,7 @@ class _HomeState extends State<Home> {
                                                                 ),
                                                                 TextSpan(
                                                                   text:
-                                                                      "${provider.currentOrderList[index]?.totalAmount?.toStringAsFixed(2)} ",
+                                                                      "${provider.currentOrderList[index]!.totalAmount} ",
                                                                   style: TextStyle(
                                                                       color: AppColors
                                                                           .Blue077C9E,
@@ -923,11 +860,6 @@ class _HomeState extends State<Home> {
                                           ],
                                         ),
                                       );
-
-                                      return Container(
-                                        height: 20,
-                                        color: Colors.red,
-                                      );
                                     },
                                   )
                                 : const Center(
@@ -1018,8 +950,8 @@ class _HomeState extends State<Home> {
                                                         SizedBox(
                                                             width: 150,
                                                             child: Text(
-                                                              "${provider.previousList[index]!.customerViewModel!.customerAddressViewModels?.first.address},"
-                                                              " ${provider.previousList[index]!.customerViewModel!.customerAddressViewModels?.first.addressLine2}, ${provider.previousList[index]!.customerViewModel!.customerAddressViewModels![0].buildingName}",
+                                                              "${provider.previousList[index]!.customerViewModel!.customerAddressViewModels![0].address},"
+                                                              " ${provider.previousList[index]!.customerViewModel!.customerAddressViewModels![0].addressLine2}, ${provider.previousList[index]!.customerViewModel!.customerAddressViewModels![0].buildingName}",
                                                               style: TextStyle(
                                                                 color: AppColors
                                                                     .gray8383,
@@ -1454,15 +1386,6 @@ class _HomeState extends State<Home> {
 
   void _launchMapsUrl(double lat, double lon) async {
     var uri = Uri.parse("google.navigation:q=$lat,$lon&mode=d");
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri);
-    } else {
-      throw 'Could not launch $uri';
-    }
-  }
-
-  void _launchMapsTextSearch(String searchText) async {
-    var uri = Uri.parse("google.navigation:q=$searchText&mode=d");
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri);
     } else {

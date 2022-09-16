@@ -56,6 +56,4 @@ class ApiConstant {
       '/api/v1/send-notification-for-stores-in-subcommunity';
   static String GET_ALL_ORDERS_FOR_CUSTOMER = '/api/v1/order';
   static String UPDATE_ORDER = "api/v1/update-order";
-  static String SEND_NOTIFICATION_TO_CUSTOMER =
-      '/api/v1/push-notifications/send-notification';
 }

@@ -13,15 +13,7 @@ class AddressController extends ChangeNotifier {
   Future<List<CommunityModel>> getAllCommunities() async {
     try {
       var response = await _addressRepository.getCommunities();
-      List<CommunityModel> temp = response.data;
-      List<CommunityModel> temp2 = [];
-      temp.forEach((element) {
-        if (element.name == '') {
-        } else {
-          temp2.add(element);
-        }
-      });
-      communityList = temp2;
+      communityList = response.data;
     } catch (e) {
       // ignore: avoid_print
       print(

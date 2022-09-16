@@ -54,28 +54,16 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
           isCommunityOrSubcommunityLoading = true;
         });
       });
-    } else {
-      setState(() {
-        communityList = mainCommunityList;
-        isCommunityOrSubcommunityLoading = true;
-      });
     }
 
-    if (mainSubCommunityList.isEmpty) {
-      Provider.of<AddressController>(context, listen: false)
-          .getAllSubCommunities()
-          .then((value) {
-        setState(() {
-          subCommunityList = value;
-          isCommunityOrSubcommunityLoading = false;
-        });
-      });
-    } else {
+    Provider.of<AddressController>(context, listen: false)
+        .getAllSubCommunities()
+        .then((value) {
       setState(() {
-        subCommunityList = mainSubCommunityList;
+        subCommunityList = value;
         isCommunityOrSubcommunityLoading = false;
       });
-    }
+    });
 
     super.initState();
   }

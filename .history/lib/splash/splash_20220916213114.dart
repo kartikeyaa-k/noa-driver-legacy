@@ -2,12 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:noa_driver/app-colors/app-colors.dart';
-import 'package:noa_driver/core/controllers/address_controller.dart';
 import 'package:noa_driver/login-registration/login.dart';
 import 'package:noa_driver/login-registration/model/custommer-login.dart';
-import 'package:noa_driver/main.dart';
 import 'package:noa_driver/order-details/home.dart';
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Splash extends StatefulWidget {
@@ -83,6 +80,7 @@ class _SplashState extends State<Splash> {
         .then((value) {
       mainSubCommunityList.clear();
       mainSubCommunityList = value;
+      mainSubCommunityName = '';
     });
   }
 
