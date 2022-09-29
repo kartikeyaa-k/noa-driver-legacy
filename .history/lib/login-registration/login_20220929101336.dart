@@ -123,7 +123,7 @@ class _LoginState extends State<Login> {
                           margin: const EdgeInsets.only(left: 20, right: 20),
                           child: Text(
                             Environment().config.envType == EnvironmentType.dev
-                                ? "Welcome To Noa (STAGING)"
+                                ? "Welcome To Noa (DEV)"
                                 : 'Welcome To Noa',
                             style: TextStyle(
                                 color: AppColors.defaultblack, fontSize: 26),

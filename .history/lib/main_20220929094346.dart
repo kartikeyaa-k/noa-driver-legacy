@@ -5,7 +5,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:noa_driver/core/controllers/address_controller.dart';
-import 'package:noa_driver/core/environments/base_config.dart';
 import 'package:noa_driver/core/models/communities_model.dart';
 import 'package:noa_driver/core/models/sub_community_model.dart';
 import 'package:noa_driver/splash/splash.dart';
@@ -40,7 +39,8 @@ Future main() async {
   );
 
   Environment().initConfig(environment);
-
+  Stripe.publishableKey = Environment().config.paymentGatewayKey;
+  await Stripe.instance.applySettings();
   FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
     RemoteNotification? notification = message.notification;
     AndroidNotification? android = message.notification?.android;

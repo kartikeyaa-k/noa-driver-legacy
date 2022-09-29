@@ -304,6 +304,8 @@ class _OrderDetailsSingleItemsState extends State<OrderDetailsSingleItems> {
                                           .invoiceDetailsViewModels!.length
                                       : 0,
                                   itemBuilder: (ctx, i) {
+
+                                    var image = 
                                     return Column(
                                       children: [
                                         Container(
@@ -961,14 +963,7 @@ class _OrderDetailsSingleItemsState extends State<OrderDetailsSingleItems> {
                                       firebaseToken: firebaseToken!,
                                       userId: userId,
                                       title: title,
-                                      body: body)
-                                  .then((value) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  getSnackBar(
-                                    'Order on the way notification sent to $customerName',
-                                  ),
-                                );
-                              });
+                                      body: body);
 
                               // await AppHelper.sendNotificationOnTheWay(
                               //     context: context,
@@ -1040,26 +1035,19 @@ class _OrderDetailsSingleItemsState extends State<OrderDetailsSingleItems> {
                               var title = 'Noa Market';
                               var body =
                                   'We hope you loved using Noa. For any issues or feedback, please reach out to us on WhatsApp 0585387662 or via email at hello@noa.market.';
-                              await Provider.of<OrderController>(context,
-                                      listen: false)
-                                  .sendNotificationToCustomer(
-                                      firebaseToken: firebaseToken!,
-                                      userId: userId,
-                                      title: title,
-                                      body: body)
-                                  .then((value) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  getSnackBar(
-                                    'Order completed notification sent to $customerName',
-                                  ),
-                                );
-                              });
+                              // await Provider.of<OrderController>(context,
+                              //         listen: false)
+                              //     .sendNotificationToCustomer(
+                              //         firebaseToken: firebaseToken!,
+                              //         userId: userId,
+                              //         title: title,
+                              //         body: body);
 
-                              // await AppHelper.sendNotificationOrderCompleted(
-                              //     context: context,
-                              //     firebaseToken: firebaseToken!,
-                              //     userName: customerName);
-                              // Navigator.of(context).pop();
+                              await AppHelper.sendNotificationOrderCompleted(
+                                  context: context,
+                                  firebaseToken: firebaseToken!,
+                                  userName: customerName);
+                              Navigator.of(context).pop();
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 getSnackBar(

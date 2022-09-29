@@ -961,14 +961,7 @@ class _OrderDetailsSingleItemsState extends State<OrderDetailsSingleItems> {
                                       firebaseToken: firebaseToken!,
                                       userId: userId,
                                       title: title,
-                                      body: body)
-                                  .then((value) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  getSnackBar(
-                                    'Order on the way notification sent to $customerName',
-                                  ),
-                                );
-                              });
+                                      body: body);
 
                               // await AppHelper.sendNotificationOnTheWay(
                               //     context: context,
@@ -1050,7 +1043,7 @@ class _OrderDetailsSingleItemsState extends State<OrderDetailsSingleItems> {
                                   .then((value) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   getSnackBar(
-                                    'Order completed notification sent to $customerName',
+                                    'Failed to send order delivered notification',
                                   ),
                                 );
                               });

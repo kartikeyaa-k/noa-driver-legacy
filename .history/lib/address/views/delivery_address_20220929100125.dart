@@ -260,13 +260,12 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
                           // var toSendSubCommunity = '/topics/${subCommunityId}';
                           var toSendSubCommunity = subCommunityId;
                           var env = Environment().config.envType;
+
                           if (env == EnvironmentType.dev) {
                             toSendSubCommunity = EnvironmentType.dev.name +
                                 '-' +
                                 toSendSubCommunity;
                           }
-
-                          toSendSubCommunity = '/topics/$toSendSubCommunity';
 
                           await Provider.of<OrderController>(context,
                                   listen: false)
@@ -275,15 +274,13 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
                                   userId: null,
                                   title: title,
                                   body: body,
-                                  subComunityId: int.parse(subCommunityId),
-                                  topic: toSendSubCommunity)
+                                  subComunityId: int.parse(subCommunityId!),
+                                  topic: '/topics/${subCommunityId}')
                               .then((value) {
                             if (value) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 getSnackBar(
-                                  env == EnvironmentType.dev
-                                      ? '(DEV) Notification to $toSendSubCommunity'
-                                      : 'Notification sent to all members at $subCommunityName',
+                                  'Notification sent to all members at $subCommunityName',
                                 ),
                               );
 

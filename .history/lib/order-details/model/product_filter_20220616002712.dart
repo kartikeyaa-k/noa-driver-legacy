@@ -22,25 +22,25 @@ class ProductFilter {
 
   ProductFilter(
       {this.productMasterId,
-      this.quickSearch,
-      this.page,
-      this.pageSize,
-      this.productShortingTypeId,
-      this.languageId,
-      this.countryId,
-      this.currencyId,
-      this.customerId,
-      this.supplierId,
-      this.priceHighToLow,
-      this.categoryIds,
-      this.categorySubIds,
-      this.brandIds,
-      this.totalRecord,
-      this.viewType,
-      this.sortBy,
-      this.maxPrice,
-      this.minPrice,
-      this.productListRequestModels});
+        this.quickSearch,
+        this.page,
+        this.pageSize,
+        this.productShortingTypeId,
+        this.languageId,
+        this.countryId,
+        this.currencyId,
+        this.customerId,
+        this.supplierId,
+        this.priceHighToLow,
+        this.categoryIds,
+        this.categorySubIds,
+        this.brandIds,
+        this.totalRecord,
+        this.viewType,
+        this.sortBy,
+        this.maxPrice,
+        this.minPrice,
+        this.productListRequestModels});
 
   ProductFilter.fromJson(Map<String, dynamic> json) {
     productMasterId = json['productMasterId'];
@@ -142,22 +142,22 @@ class ProductListRequestModels {
 
   ProductListRequestModels(
       {this.productMasterId,
-      this.productName,
-      this.productTypeId,
-      this.productType,
-      this.productDecimal,
-      this.totalRating,
-      this.totalReview,
-      this.storeId,
-      this.supplierId,
-      this.isWished,
-      this.urlKey,
-      this.metaTitle,
-      this.metaKeyword,
-      this.metaDesceiption,
-      this.guidId,
-      this.productMasterMediaViewModels,
-      this.productSubSkuRequestModels});
+        this.productName,
+        this.productTypeId,
+        this.productType,
+        this.productDecimal,
+        this.totalRating,
+        this.totalReview,
+        this.storeId,
+        this.supplierId,
+        this.isWished,
+        this.urlKey,
+        this.metaTitle,
+        this.metaKeyword,
+        this.metaDesceiption,
+        this.guidId,
+        this.productMasterMediaViewModels,
+        this.productSubSkuRequestModels});
 
   ProductListRequestModels.fromJson(Map<String, dynamic> json) {
     productMasterId = json['productMasterId'];
@@ -235,25 +235,23 @@ class ProductMasterMediaViewModels {
 
   ProductMasterMediaViewModels(
       {this.productMasterMediaId,
-      this.productMasterId,
-      this.fileType,
-      this.fileName,
-      this.fileLocation,
-      this.videoEmbade,
-      this.fileKey,
-      this.mediumImage,
-      this.smallImage,
-      this.productSubSKUId,
-      this.isFeatureImage});
+        this.productMasterId,
+        this.fileType,
+        this.fileName,
+        this.fileLocation,
+        this.videoEmbade,
+        this.fileKey,
+        this.mediumImage,
+        this.smallImage,
+        this.productSubSKUId,
+        this.isFeatureImage});
 
   ProductMasterMediaViewModels.fromJson(Map<String, dynamic> json) {
     productMasterMediaId = json['productMasterMediaId'];
     productMasterId = json['productMasterId'];
     fileType = json['fileType'];
     fileName = json['fileName'];
-    fileLocation = (json['fileLocation'] as String).contains('noa.market')
-        ? json['fileLocation'] as String
-        : 'https://admin.noa.market/' + json['fileLocation'];
+    fileLocation = json['fileLocation'];
     videoEmbade = json['videoEmbade'];
     fileKey = json['fileKey'];
     mediumImage = json['mediumImage'];
@@ -298,20 +296,20 @@ class ProductSubSkuRequestModels {
 
   ProductSubSkuRequestModels(
       {this.productSubSKUId,
-      this.productMasterId,
-      this.storeId,
-      this.subSKU,
-      this.previousPrice,
-      this.price,
-      this.quantity,
-      this.attributeCombination,
-      this.attributeSetId,
-      this.largeImage,
-      this.mediumImage,
-      this.smallImage,
-      this.videoEmbade,
-      this.symbol,
-      this.productSubSkuDetailsRequestModels});
+        this.productMasterId,
+        this.storeId,
+        this.subSKU,
+        this.previousPrice,
+        this.price,
+        this.quantity,
+        this.attributeCombination,
+        this.attributeSetId,
+        this.largeImage,
+        this.mediumImage,
+        this.smallImage,
+        this.videoEmbade,
+        this.symbol,
+        this.productSubSkuDetailsRequestModels});
 
   ProductSubSkuRequestModels.fromJson(Map<String, dynamic> json) {
     productSubSKUId = json['productSubSKUId'];
@@ -353,8 +351,9 @@ class ProductSubSkuRequestModels {
     data['videoEmbade'] = this.videoEmbade;
     data['symbol'] = this.symbol;
     if (productSubSkuDetailsRequestModels != dynamic) {
-      data['productSubSkuDetailsRequestModels'] =
-          productSubSkuDetailsRequestModels!.map((v) => v.toJson()).toList();
+      data['productSubSkuDetailsRequestModels'] = productSubSkuDetailsRequestModels!
+          .map((v) => v.toJson())
+          .toList();
     }
     return data;
   }

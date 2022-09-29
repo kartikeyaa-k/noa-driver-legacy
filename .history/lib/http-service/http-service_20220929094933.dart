@@ -108,7 +108,7 @@ class HttpService {
       logger.wtf('Request : $qp');
 
       Response response = await _getDio().get(
-        _serverConfig.baseUrl + route,
+        route,
         queryParameters: qp,
       );
       logger.wtf('Response GET : --------');
@@ -165,28 +165,24 @@ class HttpService {
       logger.w('REQUEST POST : --------');
       logger.w('PATH : ${_serverConfig.baseUrl + route}');
       logger.w('Request POST : $jsondata');
-
       Response response = await _getDio().post(
-        _serverConfig.baseUrl + route,
+        route,
         data: isFormData
             ? FormData.fromMap(data!)
             : (jsonData ?? jsonEncode(data)),
         onSendProgress: (int sent, int total) {
-          logger.w('REQUEST POST IN PROGRESS : --------');
+          // print("onSendProgress $total $sent");
           if (onProgress != null) onProgress(sent, total);
         },
       );
-      logger.w('RESPONSE POST : --------');
-      logger.w('Status Code : ${response.statusCode}');
+      // print("$route : $response");
 
       if (response.statusCode == 200) {
-        logger.w('Response POST : $response');
         return ApiResponse(
             httpCode: int.parse(response.statusCode.toString()),
             data: response,
             message: '');
       } else {
-        logger.w('Response POST : ${response.data}');
         return ApiResponse(
             httpCode: int.parse(response.statusCode.toString()),
             message: "Connection error. ${response.statusCode}",
@@ -194,17 +190,14 @@ class HttpService {
       }
     } on DioError catch (e) {
       if (e.type == DioErrorType.response) {
-        logger.v('RESPONSE POST ERROR : --------');
-        logger.v('Error Code : ${e.response?.statusCode}');
-        logger.v(e.response?.data);
+        // print(e.response!.data);
+        // print(e.response!.statusCode);
         return ApiResponse(
             httpCode: int.parse(e.response!.statusCode.toString()),
             message: "${e.response!.statusMessage}",
             data: e.response!);
       } else {
-        logger.v('UNKNOWN POST ERROR : --------');
-        logger.v('Error Code : ${e.response?.statusCode}');
-        logger.v(e.message);
+        // print(e.message);
         return ApiResponse(
             httpCode: -1,
             message: "Connection error. ${e.message}",

@@ -57,7 +57,6 @@ dependencies:
   dropdown_text_search: ^0.0.1
   dropdown_search: 5.0.2
   flutter_spinkit: 5.1.0
-  logger: ^1.1.0
 
 dev_dependencies:
   flutter_test:

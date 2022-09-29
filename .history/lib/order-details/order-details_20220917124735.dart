@@ -322,7 +322,7 @@ class _OrderDetailsSingleItemsState extends State<OrderDetailsSingleItems> {
                                                                   8)),
                                                       child: CachedNetworkImage(
                                                         imageUrl:
-                                                            "${provider.orderDetailsList!.invoiceDetailsViewModels![i].fileLocation}",
+                                                            "${provider.orderDetailsList!.invoiceDetailsViewModels![i].mediumImage}",
                                                         height: 50,
                                                         width: 70,
                                                         fit: BoxFit.cover,
@@ -730,9 +730,9 @@ class _OrderDetailsSingleItemsState extends State<OrderDetailsSingleItems> {
                                                   spacing: 5,
                                                   children: provider
                                                       .orderDetailsList!
-                                                      .customInputDataRequestModels![
+                                                      .invoiceDetailsViewModels[
                                                           index]
-                                                      .images!
+                                                      .fileLocation
                                                       .map((e) => Padding(
                                                             padding:
                                                                 const EdgeInsets
@@ -961,14 +961,7 @@ class _OrderDetailsSingleItemsState extends State<OrderDetailsSingleItems> {
                                       firebaseToken: firebaseToken!,
                                       userId: userId,
                                       title: title,
-                                      body: body)
-                                  .then((value) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  getSnackBar(
-                                    'Order on the way notification sent to $customerName',
-                                  ),
-                                );
-                              });
+                                      body: body);
 
                               // await AppHelper.sendNotificationOnTheWay(
                               //     context: context,
@@ -1040,26 +1033,19 @@ class _OrderDetailsSingleItemsState extends State<OrderDetailsSingleItems> {
                               var title = 'Noa Market';
                               var body =
                                   'We hope you loved using Noa. For any issues or feedback, please reach out to us on WhatsApp 0585387662 or via email at hello@noa.market.';
-                              await Provider.of<OrderController>(context,
-                                      listen: false)
-                                  .sendNotificationToCustomer(
-                                      firebaseToken: firebaseToken!,
-                                      userId: userId,
-                                      title: title,
-                                      body: body)
-                                  .then((value) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  getSnackBar(
-                                    'Order completed notification sent to $customerName',
-                                  ),
-                                );
-                              });
+                              // await Provider.of<OrderController>(context,
+                              //         listen: false)
+                              //     .sendNotificationToCustomer(
+                              //         firebaseToken: firebaseToken!,
+                              //         userId: userId,
+                              //         title: title,
+                              //         body: body);
 
-                              // await AppHelper.sendNotificationOrderCompleted(
-                              //     context: context,
-                              //     firebaseToken: firebaseToken!,
-                              //     userName: customerName);
-                              // Navigator.of(context).pop();
+                              await AppHelper.sendNotificationOrderCompleted(
+                                  context: context,
+                                  firebaseToken: firebaseToken!,
+                                  userName: customerName);
+                              Navigator.of(context).pop();
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 getSnackBar(

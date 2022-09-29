@@ -202,9 +202,7 @@ class HttpService {
             message: "${e.response!.statusMessage}",
             data: e.response!);
       } else {
-        logger.v('UNKNOWN POST ERROR : --------');
-        logger.v('Error Code : ${e.response?.statusCode}');
-        logger.v(e.message);
+        // print(e.message);
         return ApiResponse(
             httpCode: -1,
             message: "Connection error. ${e.message}",

@@ -180,13 +180,11 @@ class HttpService {
       logger.w('Status Code : ${response.statusCode}');
 
       if (response.statusCode == 200) {
-        logger.w('Response POST : $response');
         return ApiResponse(
             httpCode: int.parse(response.statusCode.toString()),
             data: response,
             message: '');
       } else {
-        logger.w('Response POST : ${response.data}');
         return ApiResponse(
             httpCode: int.parse(response.statusCode.toString()),
             message: "Connection error. ${response.statusCode}",
@@ -194,17 +192,14 @@ class HttpService {
       }
     } on DioError catch (e) {
       if (e.type == DioErrorType.response) {
-        logger.v('RESPONSE POST ERROR : --------');
-        logger.v('Error Code : ${e.response?.statusCode}');
-        logger.v(e.response?.data);
+        // print(e.response!.data);
+        // print(e.response!.statusCode);
         return ApiResponse(
             httpCode: int.parse(e.response!.statusCode.toString()),
             message: "${e.response!.statusMessage}",
             data: e.response!);
       } else {
-        logger.v('UNKNOWN POST ERROR : --------');
-        logger.v('Error Code : ${e.response?.statusCode}');
-        logger.v(e.message);
+        // print(e.message);
         return ApiResponse(
             httpCode: -1,
             message: "Connection error. ${e.message}",

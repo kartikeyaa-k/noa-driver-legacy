@@ -36,7 +36,7 @@ Future main() async {
 
   const environment = String.fromEnvironment(
     'ENVIRONMENT',
-    defaultValue: Environment.DEV,
+    defaultValue: Environment.PROD,
   );
 
   Environment().initConfig(environment);

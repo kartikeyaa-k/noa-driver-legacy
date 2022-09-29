@@ -281,9 +281,7 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
                             if (value) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 getSnackBar(
-                                  env == EnvironmentType.dev
-                                      ? '(DEV) Notification to $toSendSubCommunity'
-                                      : 'Notification sent to all members at $subCommunityName',
+                                env == EnvironmentType.dev? '(DEV) Notification sent to all members at $subCommunityName' : 'Notification sent to all members at $subCommunityName'',
                                 ),
                               );
 

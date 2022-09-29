@@ -2,7 +2,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:noa_driver/app-colors/app-colors.dart';
-import 'package:noa_driver/core/environments/base_config.dart';
 import 'package:noa_driver/order-details/home.dart';
 import 'package:noa_driver/utils/nav_utils.dart';
 
@@ -28,7 +27,6 @@ class _LoginState extends State<Login> {
   String passwordstr = "Password Can't Be Empty";
   String firebaseToken = "";
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
-
   @override
   void initState() {
     firebaseCloudMessaging_Listeners();
@@ -122,9 +120,7 @@ class _LoginState extends State<Login> {
                         Container(
                           margin: const EdgeInsets.only(left: 20, right: 20),
                           child: Text(
-                            Environment().config.envType == EnvironmentType.dev
-                                ? "Welcome To Noa (STAGING)"
-                                : 'Welcome To Noa',
+                            "Welcome To Noa",
                             style: TextStyle(
                                 color: AppColors.defaultblack, fontSize: 26),
                           ),

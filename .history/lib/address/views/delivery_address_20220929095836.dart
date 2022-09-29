@@ -243,64 +243,99 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
                               currentSelectedSubCommunityFromDropdown!.name;
                         }
 
-                        if (subCommunityId == null) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            getSnackBar(
-                              'Failed to send notification, Failed to fetch community details.',
-                            ),
-                          );
-                        } else {
-                          var supplierName =
-                              provider.custommerLogin?.supplierName;
+                        // provider.sendNotification(
+                        //   provider.currentPosition!.latitude.toString(),
+                        //   provider.currentPosition!.longitude.toString(),
+                        //   widget.driverLogin!.supplierId!,
+                        // );
 
-                          var body =
-                              "Our $supplierName is in $subCommunityName right now! \nClick here to purchase and enjoy near instant delivery.";
-                          var title = 'Noa Market';
+                        var supplierName =
+                            provider.custommerLogin?.supplierName;
 
-                          // var toSendSubCommunity = '/topics/${subCommunityId}';
-                          var toSendSubCommunity = subCommunityId;
-                          var env = Environment().config.envType;
-                          if (env == EnvironmentType.dev) {
-                            toSendSubCommunity = EnvironmentType.dev.name +
-                                '-' +
-                                toSendSubCommunity;
-                          }
+                        var body =
+                            "Our $supplierName is in $subCommunityName right now! \nClick here to purchase and enjoy near instant delivery.";
+                        var title = 'Noa Market';
 
-                          toSendSubCommunity = '/topics/$toSendSubCommunity';
+                        // var toSendSubCommunity = '/topics/${subCommunityId}';
+                        var toSendSubCommunity = subCommunityId;
+                        var env = Environment().config.envType;
 
-                          await Provider.of<OrderController>(context,
-                                  listen: false)
-                              .sendNotificationToSubCommunityTopic(
-                                  firebaseToken: '',
-                                  userId: null,
-                                  title: title,
-                                  body: body,
-                                  subComunityId: int.parse(subCommunityId),
-                                  topic: toSendSubCommunity)
-                              .then((value) {
-                            if (value) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                getSnackBar(
-                                  env == EnvironmentType.dev
-                                      ? '(DEV) Notification to $toSendSubCommunity'
-                                      : 'Notification sent to all members at $subCommunityName',
-                                ),
-                              );
-
-                              widget.onSubmitAddress(
-                                  subCommunityName ?? '',
-                                  currentSelectedCommunityName ?? '',
-                                  subCommunityId ?? '');
-                              Navigator.of(context).pop();
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                getSnackBar(
-                                  'Failed to send notification to members at $subCommunityName',
-                                ),
-                              );
-                            }
-                          });
+                        if (env == EnvironmentType.dev) {
+                          subscriptionTopic = EnvironmentType.dev.name +
+                              '-' +
+                              subscriptionTopic;
                         }
+
+                        await Provider.of<OrderController>(context,
+                                listen: false)
+                            .sendNotificationToSubCommunityTopic(
+                                firebaseToken: '',
+                                userId: null,
+                                title: title,
+                                body: body,
+                                subComunityId: int.parse(subCommunityId!),
+                                topic: '/topics/${subCommunityId}')
+                            .then((value) {
+                          if (value) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              getSnackBar(
+                                'Notification sent to all members at $subCommunityName',
+                              ),
+                            );
+
+                            widget.onSubmitAddress(
+                                subCommunityName ?? '',
+                                currentSelectedCommunityName ?? '',
+                                subCommunityId ?? '');
+                            Navigator.of(context).pop();
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              getSnackBar(
+                                'Failed to send notification to members at $subCommunityName',
+                              ),
+                            );
+                          }
+                        });
+
+                        // await messaging.getToken().then((value) {
+                        //   provider
+                        //       .sendPushMessage(
+                        //           'Noa Market', body, value!, subCommunityId!)
+                        //       .then((value) {
+                        //     if (value) {
+                        //       ScaffoldMessenger.of(context).showSnackBar(
+                        //         getSnackBar(
+                        //           'Notification sent to all members at $subCommunityName',
+                        //         ),
+                        //       );
+
+                        //       widget.onSubmitAddress(
+                        //           subCommunityName ?? '',
+                        //           currentSelectedCommunityName ?? '',
+                        //           subCommunityId ?? '');
+                        //       Navigator.of(context).pop();
+                        //     } else {
+                        //       ScaffoldMessenger.of(context).showSnackBar(
+                        //         getSnackBar(
+                        //           'Failed to send notification to members at $subCommunityName',
+                        //         ),
+                        //       );
+                        //     }
+                        //   });
+                        // });
+                        // NEW API DID NOT WORK
+                        // Provider.of<AddressController>(context, listen: false)
+                        //     .sendNotificationToEntireSubCommunity(
+                        //         driverId: widget.driverId,
+                        //         subCommunityId: subCommunityId!)
+                        //     .then((value) {
+                        //   ScaffoldMessenger.of(context).showSnackBar(
+                        //     getSnackBar(
+                        //       'Notification sent to all $subCommunityName Memebers',
+                        //     ),
+                        //   );
+                        // });
+
                       }
                     },
                     child: Container(

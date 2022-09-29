@@ -1404,9 +1404,7 @@ class InvoiceDetailsViewModels {
         largeImage = json['largeImage'] as String?,
         mediumImage = json['mediumImage'] as String?,
         smallImage = json['smallImage'],
-        fileLocation = (json['fileLocation'] as String).contains('noa.market')
-            ? json['fileLocation'] as String
-            : 'https://admin.noa.market/' + json['fileLocation'],
+        fileLocation = json['fileLocation'] as String?,
         digitalProductGuid = json['digitalProductGuid'] as String?,
         digitalProductUrl = json['digitalProductUrl'] as String?,
         serviceDate = json['serviceDate'],
@@ -1674,19 +1672,6 @@ class CustomInputDataRequestModels {
       this.images});
 
   CustomInputDataRequestModels.fromJson(Map<String, dynamic> json) {
-    List<String> imagesFormatted = [];
-    if (json['images'] != null) {
-      List<String> allImages = json['images'].cast<String>();
-      allImages.forEach((element) {
-        var imageLocation = '';
-        if (element.contains('admin.noa.market')) {
-          imageLocation = element;
-        } else {
-          imageLocation = 'https://admin.noa.market/' + element;
-        }
-        imagesFormatted.add(imageLocation);
-      });
-    }
     customInputDataId = json['customInputDataId'];
     cartId = json['cartId'];
     invoiceMasterId = json['invoiceMasterId'];
@@ -1697,7 +1682,7 @@ class CustomInputDataRequestModels {
     name = json['name'];
     tempId = json['tempId'];
     values = json['values'];
-    images = imagesFormatted;
+    images = json['images'].cast<String>();
   }
 
   Map<String, dynamic> toJson() {
