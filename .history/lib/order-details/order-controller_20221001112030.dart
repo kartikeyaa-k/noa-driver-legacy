@@ -164,7 +164,7 @@ class OrderController extends ChangeNotifier {
   String orderstatus = "";
   bool progress = false;
   Future<bool> updateOrderStauts(int inViceId, int orderStatusId) async {
-    buttonClicked = true;
+    buttonClicked == true;
     var apiresponse =
         await _orderRepo.upDateOrderStatus(inViceId, orderStatusId);
     if (apiresponse.httpCode == 200) {

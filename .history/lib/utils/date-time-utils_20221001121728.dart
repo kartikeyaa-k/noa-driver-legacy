@@ -11,6 +11,15 @@ class DateTimeUtil {
     var formattedDate = DateFormat(originFormat).parse(createdAt, true);
     var result =
         DateFormat('MMM dd, yyyy hh:mm a').format(formattedDate.toLocal());
+    // DateTime parseDate = DateFormat("yyyy-MM-dd'T'hh:mm:ssZ").parse(createdAt);
+
+    DateTime parseDate =
+        DateFormat("yyyy-MM-dd\'T\'HH:mm:ss\'Z\''").parse(createdAt);
+
+    var inputDate = DateTime.parse(parseDate.toString()).toLocal();
+
+    var outputFormat = DateFormat('MMM dd, yyyy hh:mm a');
+    var outputDate = outputFormat.format(inputDate.toLocal());
 
     return result;
   }

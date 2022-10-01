@@ -2,17 +2,20 @@ import 'package:intl/intl.dart';
 
 class DateTimeUtil {
   static String getFormatedDateTimeFromServerFormat(String createdAt) {
+    if (createdAt == null) return "";
 //    2020-05-30T07:49:19.461Z
     //String formattedDate = DateFormat("MMM dd, yyyy, hh:mm:ss aa").format(date.toLocal());
-    // Ideal format : 2022-02-09T16:00:00.000Z
-    createdAt = createdAt + 'Z';
-    var now = DateTime.now();
-    String originFormat = 'yyyy-MM-dd\'T\'HH:mm:ss\'Z\'';
-    var formattedDate = DateFormat(originFormat).parse(createdAt, true);
-    var result =
-        DateFormat('MMM dd, yyyy hh:mm a').format(formattedDate.toLocal());
+    DateTime parseDate = DateFormat("yyyy-MM-dd'T'hh:mm:ss").parse(createdAt);
 
-    return result;
+    var differenceBetweenUtcAndLocal = DateTime.now().hour - (parseDate.hour);
+
+    var inputDate = DateTime.parse(parseDate.toString())
+        .toLocal()
+        .add(Duration(hours: differenceBetweenUtcAndLocal));
+    var outputFormat = DateFormat('MMM dd, yyyy hh:mm a');
+    var outputDate = outputFormat.format(inputDate.toLocal());
+
+    return outputDate;
   }
 
   static String getFormatedDateTime(DateTime createdAt) {

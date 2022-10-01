@@ -1002,8 +1002,8 @@ class _OrderDetailsSingleItemsState extends State<OrderDetailsSingleItems> {
                                     textColor: Colors.white,
                                     fontSize: 16.0);
 
-                                if (provider.buttonClicked && mounted) {
-                                  Navigator.pop(context, true);
+                                if (provider.buttonClicked) {
+                                  Navigator.pop(context);
                                 }
                               }
                             });
@@ -1034,8 +1034,7 @@ class _OrderDetailsSingleItemsState extends State<OrderDetailsSingleItems> {
                       Expanded(
                         child: GestureDetector(
                           onTap: () async {
-                            if (provider.orderDetailsList!.remark != null &&
-                                provider.buttonClicked == false) {
+                            if (provider.orderDetailsList!.remark != null) {
                               var firebaseToken = provider
                                   .orderDetailsList!.remark
                                   ?.split('#')
@@ -1090,9 +1089,7 @@ class _OrderDetailsSingleItemsState extends State<OrderDetailsSingleItems> {
                                     backgroundColor: Colors.green,
                                     textColor: Colors.white,
                                     fontSize: 16.0);
-
-                                if (provider.buttonClicked && mounted)
-                                  Navigator.pop(context, true);
+                                Navigator.pop(context, true);
                               }
                             });
                           },

@@ -7,7 +7,6 @@ import 'package:noa_driver/login-registration/login.dart';
 import 'package:noa_driver/login-registration/model/custommer-login.dart';
 import 'package:noa_driver/main.dart';
 import 'package:noa_driver/order-details/home.dart';
-import 'package:noa_driver/utils/nav_utils.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -48,12 +47,13 @@ class _SplashState extends State<Splash> {
       if (custommerLogin != null) {
         Future.delayed(
             const Duration(seconds: 3),
-            () => NavUtils.pushAndRemoveUntil(
+            () => Navigator.pushAndRemoveUntil(
                   context,
-                  Home(
-                    custommerLogin!.supplierId,
-                    driverLogin: custommerLogin!,
-                  ),
+                  MaterialPageRoute(
+                      builder: (context) => Home(
+                            custommerLogin!.supplierId,
+                            driverLogin: custommerLogin!,
+                          )),
                 ));
       } else {
         Future.delayed(

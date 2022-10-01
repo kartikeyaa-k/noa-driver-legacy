@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -64,7 +63,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  final ScrollController _ordersListController = ScrollController();
+  final ScrollController _controller = ScrollController();
   bool stoppingFlag = false;
   Timer? _timer;
   bool isCurrent = true;
@@ -82,13 +81,6 @@ class _HomeState extends State<Home> {
   bool isOnline = false;
 
   // MAIN FUNCTIONS
-  void _scrollDown() {
-    _ordersListController.animateTo(
-      _ordersListController.position.maxScrollExtent,
-      duration: Duration(seconds: 2),
-      curve: Curves.fastOutSlowIn,
-    );
-  }
 
   Future<void> setNotificationSubscriptionTopics() async {
     if (widget.driverLogin != null && widget.driverLogin?.supplierId != null) {
@@ -155,12 +147,6 @@ class _HomeState extends State<Home> {
         ),
       ),
     );
-
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
-      if (mounted) {
-        _scrollDown();
-      }
-    });
   }
 
   @override

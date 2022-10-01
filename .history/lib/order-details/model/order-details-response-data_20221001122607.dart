@@ -1406,15 +1406,16 @@ class InvoiceDetailsViewModels {
         largeImage = json['largeImage'] as String?,
         mediumImage = json['mediumImage'] as String?,
         smallImage = json['smallImage'],
-        fileLocation = Environment().config.envType == EnvironmentType.dev
-            ? (json['fileLocation'] as String)
-                    .contains('http://3.28.195.139:8080/')
-                ? json['fileLocation'] as String
-                : 'http://3.28.195.139:8080/' + json['fileLocation']
-            : (json['fileLocation'] as String)
-                    .contains('http://admin.noa.market/')
-                ? json['fileLocation'] as String
-                : 'http://admin.noa.market/' + json['fileLocation'],
+        fileLocation = json['fileLocation'] as String,
+        // fileLocation = Environment().config.envType == EnvironmentType.dev
+        //     ? (json['fileLocation'] as String)
+        //             .contains('http://3.28.195.139:8080/')
+        //         ? json['fileLocation'] as String
+        //         : 'http://3.28.195.139:8080/' + json['fileLocation']
+        //     : (json['fileLocation'] as String)
+        //             .contains('http://admin.noa.market/')
+        //         ? json['fileLocation'] as String
+        //         : 'http://admin.noa.market/' + json['fileLocation'],
         digitalProductGuid = json['digitalProductGuid'] as String?,
         digitalProductUrl = json['digitalProductUrl'] as String?,
         serviceDate = json['serviceDate'],

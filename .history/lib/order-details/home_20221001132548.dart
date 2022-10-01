@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -155,12 +154,6 @@ class _HomeState extends State<Home> {
         ),
       ),
     );
-
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
-      if (mounted) {
-        _scrollDown();
-      }
-    });
   }
 
   @override

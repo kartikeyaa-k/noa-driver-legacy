@@ -1,6 +1,3 @@
-import 'package:intl/intl.dart';
-import 'package:noa_driver/utils/date-time-utils.dart';
-
 import 'customer_view_model.dart';
 
 class CurrentOrderResponseData {
@@ -55,8 +52,7 @@ class CurrentOrderResponseData {
         productImage = json['productImage'] as String?,
         driverShipmentId = json['driverShipmentId'] as int?,
         totalAmount = json['totalAmount'] as double?,
-        invoiceDate = DateTimeUtil.getFormatedDateTimeFromServerFormat(
-            json['invoiceDate'] as String),
+        invoiceDate = json['invoiceDate'] as String?,
         deliveryDate = json['deliveryDate'],
         invoiceStatusId = json['invoiceStatusId'] as int?,
         invoiceStatusName = json['invoiceStatusName'] as String?,

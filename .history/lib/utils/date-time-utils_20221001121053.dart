@@ -8,11 +8,19 @@ class DateTimeUtil {
     createdAt = createdAt + 'Z';
     var now = DateTime.now();
     String originFormat = 'yyyy-MM-dd\'T\'HH:mm:ss\'Z\'';
-    var formattedDate = DateFormat(originFormat).parse(createdAt, true);
-    var result =
-        DateFormat('MMM dd, yyyy hh:mm a').format(formattedDate.toLocal());
+    var formattedDate = DateFormat(originFormat).parse(this, true);
 
-    return result;
+    // DateTime parseDate = DateFormat("yyyy-MM-dd'T'hh:mm:ssZ").parse(createdAt);
+
+    DateTime parseDate =
+        DateFormat("yyyy-MM-dd\'T\'HH:mm:ss\'Z\''").parse(createdAt);
+
+    var inputDate = DateTime.parse(parseDate.toString()).toLocal();
+
+    var outputFormat = DateFormat('MMM dd, yyyy hh:mm a');
+    var outputDate = outputFormat.format(inputDate.toLocal());
+
+    return outputDate;
   }
 
   static String getFormatedDateTime(DateTime createdAt) {

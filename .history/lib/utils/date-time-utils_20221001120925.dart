@@ -5,14 +5,21 @@ class DateTimeUtil {
 //    2020-05-30T07:49:19.461Z
     //String formattedDate = DateFormat("MMM dd, yyyy, hh:mm:ss aa").format(date.toLocal());
     // Ideal format : 2022-02-09T16:00:00.000Z
-    createdAt = createdAt + 'Z';
-    var now = DateTime.now();
     String originFormat = 'yyyy-MM-dd\'T\'HH:mm:ss\'Z\'';
-    var formattedDate = DateFormat(originFormat).parse(createdAt, true);
-    var result =
-        DateFormat('MMM dd, yyyy hh:mm a').format(formattedDate.toLocal());
 
-    return result;
+    createdAt = createdAt + 'Z';
+
+    // DateTime parseDate = DateFormat("yyyy-MM-dd'T'hh:mm:ssZ").parse(createdAt);
+
+    DateTime parseDate =
+        DateFormat("yyyy-MM-dd\'T\'HH:mm:ss\'Z\''").parse(createdAt);
+
+    var inputDate = DateTime.parse(parseDate.toString()).toLocal();
+
+    var outputFormat = DateFormat('MMM dd, yyyy hh:mm a');
+    var outputDate = outputFormat.format(inputDate.toLocal());
+
+    return outputDate;
   }
 
   static String getFormatedDateTime(DateTime createdAt) {

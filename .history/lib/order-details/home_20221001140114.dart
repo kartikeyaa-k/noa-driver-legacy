@@ -1409,6 +1409,17 @@ class _HomeState extends State<Home> {
                   ],
                 ),
                 Positioned(
+                    top: MediaQuery.of(context).size.height / 2,
+                    right: 0,
+                    child: Column(
+                      children: [
+                        PrimaryButton(
+                            text: 'Up',
+                            onTap: () {},
+                            icon: Icon(Icons.arrow_upward)),
+                      ],
+                    )),
+                Positioned(
                   bottom: -0.5,
                   left: 0.0,
                   right: 0.0,

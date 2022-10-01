@@ -236,7 +236,7 @@ class _LoginState extends State<Login> {
                                       backgroundColor: Colors.red,
                                       textColor: Colors.white,
                                       fontSize: 16.0);
-                                  NavUtils.pushAndRemoveUntil(
+                                  NavUtils.push(
                                     context,
                                     Home(
                                       provider.custommerLogin!.storeId!,

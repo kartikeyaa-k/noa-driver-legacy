@@ -4,7 +4,10 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:noa_driver/app-colors/app-colors.dart';
 import 'package:noa_driver/components/snackbar/primary_snackbar.dart';
 import 'package:noa_driver/core/helpers/app_helpers.dart';
+import 'package:noa_driver/login-registration/model/custommer-login.dart';
+import 'package:noa_driver/order-details/home.dart';
 import 'package:noa_driver/utils/date-time-utils.dart';
+import 'package:noa_driver/utils/nav_utils.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -22,9 +25,23 @@ class OrderDetailsSingleItems extends StatefulWidget {
   String? invoiceStatus;
   String? preOrCurrent;
   String? firebaseToken;
-  OrderDetailsSingleItems(this.customerViewModel, this.totalAmmount,
-      this.orderNumber, this.paymentStatus, this.index, this.inVoiceId,
-      {this.invoiceStatus, this.preOrCurrent, this.firebaseToken});
+
+  int? DriverId;
+  DriverLogin? driverLogin;
+
+  OrderDetailsSingleItems(
+    this.customerViewModel,
+    this.totalAmmount,
+    this.orderNumber,
+    this.paymentStatus,
+    this.index,
+    this.inVoiceId, {
+    this.invoiceStatus,
+    this.preOrCurrent,
+    this.firebaseToken,
+    this.DriverId,
+    this.driverLogin,
+  });
 
   @override
   _OrderDetailsSingleItemsState createState() =>
@@ -36,7 +53,6 @@ class _OrderDetailsSingleItemsState extends State<OrderDetailsSingleItems> {
   void initState() {
     Provider.of<OrderController>(context, listen: false)
         .getOrderDetails('0', widget.inVoiceId.toString());
-    Provider.of<OrderController>(context, listen: false).buttonClicked == false;
     super.initState();
   }
 
@@ -945,8 +961,7 @@ class _OrderDetailsSingleItemsState extends State<OrderDetailsSingleItems> {
                       Expanded(
                         child: GestureDetector(
                           onTap: () async {
-                            if (provider.orderDetailsList!.remark != null &&
-                                provider.buttonClicked == false) {
+                            if (provider.orderDetailsList!.remark != null) {
                               var firebaseToken = provider
                                   .orderDetailsList!.remark
                                   ?.split('#')
@@ -1001,10 +1016,9 @@ class _OrderDetailsSingleItemsState extends State<OrderDetailsSingleItems> {
                                     backgroundColor: Colors.green,
                                     textColor: Colors.white,
                                     fontSize: 16.0);
-
-                                if (provider.buttonClicked && mounted) {
-                                  Navigator.pop(context, true);
-                                }
+                                Navigator.of(context).pushNamedAndRemoveUntil(
+                                    'HomeScreen',
+                                    (Route<dynamic> route) => false);
                               }
                             });
                           },
@@ -1034,8 +1048,7 @@ class _OrderDetailsSingleItemsState extends State<OrderDetailsSingleItems> {
                       Expanded(
                         child: GestureDetector(
                           onTap: () async {
-                            if (provider.orderDetailsList!.remark != null &&
-                                provider.buttonClicked == false) {
+                            if (provider.orderDetailsList!.remark != null) {
                               var firebaseToken = provider
                                   .orderDetailsList!.remark
                                   ?.split('#')
@@ -1090,9 +1103,7 @@ class _OrderDetailsSingleItemsState extends State<OrderDetailsSingleItems> {
                                     backgroundColor: Colors.green,
                                     textColor: Colors.white,
                                     fontSize: 16.0);
-
-                                if (provider.buttonClicked && mounted)
-                                  Navigator.pop(context, true);
+                                Navigator.pop(context, true);
                               }
                             });
                           },

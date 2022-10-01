@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -58,13 +57,12 @@ class LifecycleEventHandler extends WidgetsBindingObserver {
 class Home extends StatefulWidget {
   int? DriverId;
   DriverLogin? driverLogin;
-  Home(this.DriverId, {Key? key, this.driverLogin}) : super(key: key);
+  Home(this.DriverId, {this.driverLogin});
   @override
   State<Home> createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
-  final ScrollController _ordersListController = ScrollController();
   bool stoppingFlag = false;
   Timer? _timer;
   bool isCurrent = true;
@@ -82,13 +80,6 @@ class _HomeState extends State<Home> {
   bool isOnline = false;
 
   // MAIN FUNCTIONS
-  void _scrollDown() {
-    _ordersListController.animateTo(
-      _ordersListController.position.maxScrollExtent,
-      duration: Duration(seconds: 2),
-      curve: Curves.fastOutSlowIn,
-    );
-  }
 
   Future<void> setNotificationSubscriptionTopics() async {
     if (widget.driverLogin != null && widget.driverLogin?.supplierId != null) {
@@ -155,12 +146,6 @@ class _HomeState extends State<Home> {
         ),
       ),
     );
-
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
-      if (mounted) {
-        _scrollDown();
-      }
-    });
   }
 
   @override
@@ -175,7 +160,8 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () {
-        return Future.value(false);
+        Platform.isIOS ? exit(0) : SystemNavigator.pop();
+        return Future.value(true);
       },
       child: Consumer<OrderController>(
         builder: (context, provider, child) {
@@ -446,7 +432,6 @@ class _HomeState extends State<Home> {
                               onRefresh: _pullRefresh,
                               child: provider.currentOrderList.isNotEmpty
                                   ? ListView.builder(
-                                      controller: _ordersListController,
                                       shrinkWrap: true,
                                       itemCount:
                                           provider.currentOrderList.length,
@@ -726,10 +711,12 @@ class _HomeState extends State<Home> {
                                                       thickness: 1,
                                                     ),
                                                     Text(
-                                                      provider
-                                                          .currentOrderList[
-                                                              index]!
-                                                          .invoiceDate!,
+                                                      DateTimeUtil
+                                                          .getFormatedDateTimeFromServerFormat(
+                                                              provider
+                                                                  .currentOrderList[
+                                                                      index]!
+                                                                  .invoiceDate!),
                                                       style: TextStyle(
                                                           color: AppColors
                                                               .gray8383,
