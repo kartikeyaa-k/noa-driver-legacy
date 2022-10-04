@@ -138,7 +138,8 @@ class _HomeState extends State<Home> {
       widget.driverLogin!.storeId!,
     );
     Provider.of<OrderController>(context, listen: false).getUserData();
-
+    Provider.of<OrderController>(context, listen: false).buttonClicked = false;
+    ;
     //   Provider.of<OrderController>(context, listen: false).locatePosition(widget.DriverId!);
     // if (!stoppingFlag) {
     //   sendingSignal();

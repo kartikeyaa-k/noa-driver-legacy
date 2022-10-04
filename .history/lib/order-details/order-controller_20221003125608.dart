@@ -31,6 +31,7 @@ class OrderController extends ChangeNotifier {
   DriverProfile? driverProfiledata;
 
   bool _isLocationon = true;
+  bool buttonClicked = false;
   bool get isLocationon => _isLocationon;
 
   set isLocationon(bool value) {
@@ -163,6 +164,7 @@ class OrderController extends ChangeNotifier {
   String orderstatus = "";
   bool progress = false;
   Future<bool> updateOrderStauts(int inViceId, int orderStatusId) async {
+    buttonClicked = true;
     var apiresponse =
         await _orderRepo.upDateOrderStatus(inViceId, orderStatusId);
     if (apiresponse.httpCode == 200) {
@@ -914,7 +916,7 @@ class OrderController extends ChangeNotifier {
       "subComunityId": 0,
       "userType": userType
     };
-
+    buttonClicked = false;
     // JSON REQUEST
     // {"fireBaseToken":"dkgHx48VTT2TTPWKgdr2Hx:APA91bGTs77BeV5r3xxsc27ya-t-DbX1sjE6vL--DMZTYEVPBlZg1otfE9vifzofBVsmb0S3UYW9eNIBt_dO4zpOeXAp2S7ktJ6eq34aZ_oV9iMcjJFnBRgsRq1LZRIEkcX6FK-xcjol","topic":null,"title":"Hi GORIAN NOA","body":"Your order has been confirmed. It is on the way to your address","userId":10395,"isSpecificUser":true,"onClickAction":"string","subComunityId":0,"userType":1}
     var response = await _orderRepo.sendNotificationToCustomer(
@@ -947,19 +949,7 @@ class OrderController extends ChangeNotifier {
       "subComunityId": subComunityId,
       "userType": 1
     };
-
-    // {
-//    "fireBaseToken":null,
-//    "topic":"/topics/dev-6",
-//    "title":"Noa Market",
-//    "body":"Our Fresh Market 1 is in Maple 4 right now! \nClick here to purchase and enjoy near instant delivery.",
-//    "userId":null,
-//    "isSpecificUser":false,
-//    "onClickAction":"string",
-//    "subComunityId":6,
-//    "userType":1
-// }
-
+    buttonClicked = false;
     var response = await _orderRepo.sendNotificationToCustomer(
       requestModel: request,
     );

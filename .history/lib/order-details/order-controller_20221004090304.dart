@@ -914,7 +914,7 @@ class OrderController extends ChangeNotifier {
       "subComunityId": 0,
       "userType": userType
     };
-
+    buttonClicked = false;
     // JSON REQUEST
     // {"fireBaseToken":"dkgHx48VTT2TTPWKgdr2Hx:APA91bGTs77BeV5r3xxsc27ya-t-DbX1sjE6vL--DMZTYEVPBlZg1otfE9vifzofBVsmb0S3UYW9eNIBt_dO4zpOeXAp2S7ktJ6eq34aZ_oV9iMcjJFnBRgsRq1LZRIEkcX6FK-xcjol","topic":null,"title":"Hi GORIAN NOA","body":"Your order has been confirmed. It is on the way to your address","userId":10395,"isSpecificUser":true,"onClickAction":"string","subComunityId":0,"userType":1}
     var response = await _orderRepo.sendNotificationToCustomer(
@@ -959,7 +959,7 @@ class OrderController extends ChangeNotifier {
 //    "subComunityId":6,
 //    "userType":1
 // }
-
+    buttonClicked = false;
     var response = await _orderRepo.sendNotificationToCustomer(
       requestModel: request,
     );

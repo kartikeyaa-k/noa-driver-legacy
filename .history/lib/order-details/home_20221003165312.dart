@@ -180,6 +180,8 @@ class _HomeState extends State<Home> {
       },
       child: Consumer<OrderController>(
         builder: (context, provider, child) {
+          Provider.of<OrderController>(context, listen: false).buttonClicked =
+              false;
           return Scaffold(
             appBar: AppBar(
               systemOverlayStyle: const SystemUiOverlayStyle(

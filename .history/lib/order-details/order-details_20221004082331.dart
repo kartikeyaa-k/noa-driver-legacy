@@ -39,6 +39,7 @@ class _OrderDetailsSingleItemsState extends State<OrderDetailsSingleItems> {
   void initState() {
     Provider.of<OrderController>(context, listen: false)
         .getOrderDetails('0', widget.inVoiceId.toString());
+    Provider.of<OrderController>(context, listen: false).buttonClicked == false;
     super.initState();
   }
 
@@ -1003,7 +1004,7 @@ class _OrderDetailsSingleItemsState extends State<OrderDetailsSingleItems> {
                                     textColor: Colors.white,
                                     fontSize: 16.0);
 
-                                if (mounted) {
+                                if (mounted && isOnTheWayClicked == false) {
                                   Navigator.pop(context, true);
                                 }
                               }
@@ -1091,7 +1092,8 @@ class _OrderDetailsSingleItemsState extends State<OrderDetailsSingleItems> {
                                     textColor: Colors.white,
                                     fontSize: 16.0);
 
-                                if (mounted) Navigator.pop(context, true);
+                                if (provider.buttonClicked && mounted)
+                                  Navigator.pop(context, true);
                               }
                             });
                           },

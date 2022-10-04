@@ -39,6 +39,7 @@ class _OrderDetailsSingleItemsState extends State<OrderDetailsSingleItems> {
   void initState() {
     Provider.of<OrderController>(context, listen: false)
         .getOrderDetails('0', widget.inVoiceId.toString());
+    Provider.of<OrderController>(context, listen: false).buttonClicked == false;
     super.initState();
   }
 
