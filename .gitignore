@@ -23,6 +23,7 @@ dist/
 target/
 dist/
 build/
+.history/
 
 # JetBrains IDE
 .idea/
