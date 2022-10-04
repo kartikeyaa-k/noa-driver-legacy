@@ -1,7 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:noa_driver/app-colors/app-colors.dart';
+import 'package:noa_driver/core/style/styles.dart';
 import 'package:noa_driver/order-details/home.dart';
 import 'package:noa_driver/utils/nav_utils.dart';
 import 'package:provider/provider.dart';
@@ -33,34 +35,16 @@ class _TruckDetailsState extends State<TruckDetails> {
       builder: (context, provider, child) {
         return Scaffold(
           appBar: AppBar(
-            backgroundColor: AppColors.pureWhite,
-            leading: InkWell(
-              onTap: () {
-                Navigator.pop(context);
-              },
-              child: Container(
-                margin: const EdgeInsets.all(12),
-                height: 15,
-                width: 15,
-                decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.all(Radius.circular(10)),
-                    color: AppColors.Blue077C9E),
-                child: Center(
-                    child: Image.asset(
-                  "assets/images/ic-back-noa-white.png",
-                  height: 15,
-                  width: 15,
-                )),
-              ),
+            systemOverlayStyle: const SystemUiOverlayStyle(
+              statusBarColor: Paints.primaryBlueDarker,
             ),
-            title: Text(
-              "Inventory",
-              style: TextStyle(
-                  color: AppColors.defaultblack,
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600),
-              overflow: TextOverflow.ellipsis,
-            ),
+            backgroundColor: Paints.primaryBlueDarker,
+            leading: GestureDetector(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: const Icon(Icons.arrow_back_ios)),
+            title: const Text('Inventory'),
             centerTitle: true,
           ),
           body: Stack(
@@ -72,118 +56,12 @@ class _TruckDetailsState extends State<TruckDetails> {
                   shrinkWrap: true,
                   physics: const BouncingScrollPhysics(),
                   children: [
-                    // Container(
-                    //
-                    //   width: double.infinity,
-                    //   height: 150,
-                    //   decoration: BoxDecoration(
-                    //     borderRadius: BorderRadius.only(
-                    //         bottomLeft: Radius.circular(12),
-                    //         bottomRight: Radius.circular(12)
-                    //     ),
-                    //     color: AppColors.Blue077C9E,
-                    //   ),
-                    //   child: Row(
-                    //
-                    //     children: [
-                    //       Container(
-                    //         margin: EdgeInsets.only(left: 20),
-                    //         height: 80,
-                    //         width: 113,
-                    //         decoration: BoxDecoration(
-                    //             borderRadius: BorderRadius.all(Radius.circular(8)),
-                    //             color: AppColors.pureWhite
-                    //         ),
-                    //         child: Center(child: CachedNetworkImage(
-                    //           imageUrl: '',
-                    //           width: 65,
-                    //           height: 65,
-                    //           errorWidget: (ctx,url,error)=>Image.asset("assets/images/image-near-item.png"),
-                    //         )),
-                    //       ),
-                    //       SizedBox(width: 10,),
-                    //       Column(
-                    //         mainAxisAlignment: MainAxisAlignment.center,
-                    //         children: [
-                    //           Text("Kibson",style: TextStyle(color: AppColors.pureWhite,fontSize: 22,fontWeight: FontWeight.w600),),
-                    //           SizedBox(height: 5,),
-                    //
-                    //           Row(
-                    //             mainAxisAlignment: MainAxisAlignment.center,
-                    //             children: [
-                    //               Image.asset("assets/images/ic-noa-location.png"),
-                    //               SizedBox(width: 5,),
-                    //               Text("2 KM",style: TextStyle(color: AppColors.pureWhite,fontSize: 12),),
-                    //             ],
-                    //           ),
-                    //
-                    //         ],
-                    //       )
-                    //     ],
-                    //   ),
-                    // ),
-                    /* SizedBox(height: 20,),
-
-                    Row(
-                      children: [
-                        SizedBox(width: 20,),
-                        Image.asset("assets/images/item-image3.png",width: 79,height: 79,),
-                        SizedBox(width: 11,),
-                        Image.asset("assets/images/category-fruits.png",width: 79,height: 79,),
-                        SizedBox(width: 11,),
-                        Image.asset("assets/images/category-vegetables.png",width: 79,height: 79,),
-                        SizedBox(width: 11,),
-                        Image.asset("assets/images/category-seafood.png",width: 79,height: 79,),
-                        SizedBox(width: 20,),
-                      ],
-                    ),*/
-
-                    /*  SizedBox(height: 20,),
-
-                    Container(
-                      height: 40,
-                      margin: EdgeInsets.only(left: 20,right: 20),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(10)),
-                          color: AppColors.pureWhite
-                      ),
-                      width: double.infinity,
-                      child: TextField(
-                        style: TextStyle(color: AppColors.defaultblack,fontSize: 11),
-                        decoration: InputDecoration(
-                            border: InputBorder.none,
-                            focusedBorder: InputBorder.none,
-                            enabledBorder: InputBorder.none,
-                            errorBorder: InputBorder.none,
-                            disabledBorder: InputBorder.none,
-                            prefixIcon: Image.asset("assets/images/ic-noa-search.png"),
-                            hintText: "Search heare",
-                            hintStyle: TextStyle(color: AppColors.gray8383,fontSize: 11)
-                        ),
-                      ),
-                    ),*/
-
                     const SizedBox(
                       height: 20,
                     ),
-
                     Container(
                       margin: const EdgeInsets.only(
                           left: 20, right: 20, bottom: 30),
-                      decoration: BoxDecoration(
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(10)),
-                        color: AppColors.pureWhite,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.5),
-                            spreadRadius: 1,
-                            blurRadius: 2,
-                            offset: const Offset(
-                                0, 1), // changes position of shadow
-                          ),
-                        ],
-                      ),
                       child: provider.productFilter != null
                           ? Container(
                               margin: const EdgeInsets.only(
@@ -314,64 +192,6 @@ class _TruckDetailsState extends State<TruckDetails> {
                                     );
                                   }))
                           : const SizedBox(),
-                    ),
-                  ],
-                ),
-              ),
-              Positioned(
-                bottom: -0.5,
-                left: 0.0,
-                right: 0.0,
-                child: Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    Image.asset(
-                      "assets/images/footernew.png",
-                      width: 1000,
-                    ),
-                    Container(
-                      margin: const EdgeInsets.only(top: 30),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          GestureDetector(
-                              onTap: () {
-                                NavUtils.push(
-                                    context,
-                                    Home(
-                                      provider.custommerLogin!.supplierId,
-                                      driverLogin: provider.custommerLogin!,
-                                    ));
-                              },
-                              child: Image.asset(
-                                "assets/images/ic-noa-home.png",
-                                width: 24,
-                                height: 24,
-                              )),
-                          Image.asset(
-                            "assets/images/inventory-colored.png",
-                            width: 24,
-                            height: 24,
-                          ),
-                          GestureDetector(
-                              onTap: () {
-                                NavUtils.push(
-                                    context,
-                                    TruckDetails(
-                                        provider.custommerLogin!.supplierId!));
-                              },
-                              child: Image.asset(
-                                "assets/images/ic-noa-profile.png",
-                                width: 24,
-                                height: 24,
-                              )),
-                          Image.asset(
-                            "assets/images/ic-noa-notification.png",
-                            width: 24,
-                            height: 24,
-                          ),
-                        ],
-                      ),
                     ),
                   ],
                 ),

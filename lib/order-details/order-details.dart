@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:noa_driver/app-colors/app-colors.dart';
 import 'package:noa_driver/components/snackbar/primary_snackbar.dart';
-import 'package:noa_driver/core/helpers/app_helpers.dart';
 import 'package:noa_driver/utils/date-time-utils.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:provider/provider.dart';
@@ -947,7 +946,8 @@ class _OrderDetailsSingleItemsState extends State<OrderDetailsSingleItems> {
                       Expanded(
                         child: GestureDetector(
                           onTap: () async {
-                            if (provider.orderDetailsList!.remark != null) {
+                            if (provider.orderDetailsList!.remark != null &&
+                                isOnTheWayClicked == false) {
                               var firebaseToken = provider
                                   .orderDetailsList!.remark
                                   ?.split('#')
@@ -1004,7 +1004,10 @@ class _OrderDetailsSingleItemsState extends State<OrderDetailsSingleItems> {
                                     fontSize: 16.0);
 
                                 if (mounted) {
-                                  Navigator.pop(context, true);
+                                  setState(() {
+                                    isOnTheWayClicked = true;
+                                  });
+                                  Navigator.pop(context);
                                 }
                               }
                             });
@@ -1035,7 +1038,8 @@ class _OrderDetailsSingleItemsState extends State<OrderDetailsSingleItems> {
                       Expanded(
                         child: GestureDetector(
                           onTap: () async {
-                            if (provider.orderDetailsList!.remark != null) {
+                            if (provider.orderDetailsList!.remark != null &&
+                                isCompletedClicked == false) {
                               var firebaseToken = provider
                                   .orderDetailsList!.remark
                                   ?.split('#')
@@ -1091,7 +1095,12 @@ class _OrderDetailsSingleItemsState extends State<OrderDetailsSingleItems> {
                                     textColor: Colors.white,
                                     fontSize: 16.0);
 
-                                if (mounted) Navigator.pop(context, true);
+                                if (mounted) {
+                                  setState(() {
+                                    isCompletedClicked = true;
+                                  });
+                                  Navigator.pop(context);
+                                }
                               }
                             });
                           },

@@ -58,10 +58,10 @@ class _SplashState extends State<Splash> {
       } else {
         Future.delayed(
             const Duration(seconds: 3),
-            () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Login()),
-                ));
+            () => Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => Login()),
+                (_) => false));
       }
     });
 
@@ -89,47 +89,17 @@ class _SplashState extends State<Splash> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        color: AppColors.pureWhite,
-        child: Stack(
-          children: [
-            /////////////
-            Positioned(
-                left: -90,
-                top: -90,
-                child: Image.asset(
-                  "assets/images/image-logo icon.png",
-                  height: 200,
-                  width: 200,
-                  fit: BoxFit.fill,
-                )),
-            Positioned(
-                right: -90,
-                bottom: -90,
-                child: Image.asset(
-                  "assets/images/ic-logo-colored.png",
-                  height: 200,
-                  width: 200,
-                  fit: BoxFit.fill,
-                )),
-
-            Positioned(
-                child: AnimatedOpacity(
-                    opacity: showCar == false ? 0.0 : 1.0,
-                    duration: const Duration(seconds: 2),
-                    child: Center(
-                        child: Image.asset("assets/images/logowithtext.png")))),
-
-            AnimatedPositioned(
-                duration: const Duration(seconds: 2),
-                left: showCar == false ? -120 : 0,
-                bottom: -40.0,
-                child: Image.asset("assets/images/lori.png")),
-          ],
-        ),
-      ),
+          width: double.infinity,
+          height: double.infinity,
+          color: AppColors.pureWhite,
+          child: Center(
+            child: SizedBox(
+                height: 200,
+                width: 200,
+                child: Image.asset('assets/images/noa-logo.gif')),
+          )),
     );
   }
 }

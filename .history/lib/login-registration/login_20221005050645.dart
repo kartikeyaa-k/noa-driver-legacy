@@ -104,7 +104,7 @@ class _LoginState extends State<Login> {
                       children: [
                         Text(
                           Environment().config.envType == EnvironmentType.dev
-                              ? "Partner Login \n(Staging Environment)"
+                              ? "Partner Login"
                               : 'Partner Login',
                           style: TextStyles.body20x600
                               .copyWith(color: Paints.primaryBlueDarker),

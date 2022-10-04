@@ -1405,7 +1405,7 @@ class _HomeState extends State<Home> {
                             ),
                           ),
                     const SizedBox(
-                      height: 50,
+                      height: 65,
                     ),
                   ],
                 ),
@@ -1416,12 +1416,20 @@ class _HomeState extends State<Home> {
                   child: Stack(
                     clipBehavior: Clip.none,
                     children: [
-                      Image.asset(
-                        "assets/images/footernew.png",
-                        width: 1000,
-                      ),
                       Container(
-                        margin: const EdgeInsets.only(top: 30),
+                        margin: const EdgeInsets.only(top: 30, bottom: 0),
+                        padding:
+                            EdgeInsets.only(bottom: Platform.isIOS ? 10 : 0),
+                        decoration: const BoxDecoration(
+                            color: Paints.primaryBlue,
+                            boxShadow: [
+                              BoxShadow(
+                                  blurRadius: 30,
+                                  spreadRadius: 1,
+                                  offset: Offset(0, 0),
+                                  color: Paints.primaryBlueDarker)
+                            ]),
+                        height: Platform.isIOS ? 78 : 60,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
