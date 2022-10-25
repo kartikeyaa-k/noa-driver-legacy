@@ -308,140 +308,112 @@ class _OrderDetailsSingleItemsState extends State<OrderDetailsSingleItems> {
                                   itemBuilder: (ctx, i) {
                                     return Column(
                                       children: [
-                                        Container(
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  Container(
-                                                    child: ClipRRect(
-                                                      borderRadius:
-                                                          const BorderRadius
-                                                                  .all(
-                                                              Radius.circular(
-                                                                  8)),
-                                                      child: CachedNetworkImage(
-                                                        imageUrl:
-                                                            "${provider.orderDetailsList!.invoiceDetailsViewModels![i].fileLocation}",
-                                                        height: 50,
-                                                        width: 70,
-                                                        fit: BoxFit.cover,
-                                                        errorWidget: (ctx, uarl,
-                                                                error) =>
-                                                            ClipRRect(
-                                                                borderRadius:
-                                                                    const BorderRadius
-                                                                            .all(
-                                                                        Radius.circular(
-                                                                            8)),
-                                                                child:
-                                                                    Image.asset(
-                                                                  "assets/images/golden-apple.png",
-                                                                  fit: BoxFit
-                                                                      .cover,
-                                                                  width: 70,
-                                                                  height: 50,
-                                                                )),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  const SizedBox(
-                                                    width: 10,
-                                                  ),
-                                                  Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      SizedBox(
-                                                          width: 120,
-                                                          child: Text(
-                                                            "${provider.orderDetailsList!.invoiceDetailsViewModels![i].productName}",
-                                                            style: TextStyle(
-                                                                color: AppColors
-                                                                    .defaultblack,
-                                                                fontSize: 13),
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .ellipsis,
+                                        Row(
+                                          children: [
+                                            Expanded(
+                                              flex: 2,
+                                              child: ClipRRect(
+                                                borderRadius:
+                                                    const BorderRadius.all(
+                                                        Radius.circular(8)),
+                                                child: CachedNetworkImage(
+                                                  imageUrl:
+                                                      "${provider.orderDetailsList!.invoiceDetailsViewModels![i].fileLocation}",
+                                                  height: 50,
+                                                  width: 70,
+                                                  fit: BoxFit.cover,
+                                                  errorWidget: (ctx, uarl,
+                                                          error) =>
+                                                      ClipRRect(
+                                                          borderRadius:
+                                                              const BorderRadius
+                                                                      .all(
+                                                                  Radius
+                                                                      .circular(
+                                                                          8)),
+                                                          child: Image.asset(
+                                                            "assets/images/404-wreck-it-ralph-ralph.gif",
+                                                            fit: BoxFit.cover,
+                                                            width: 70,
+                                                            height: 50,
                                                           )),
-                                                      const SizedBox(
-                                                        height: 8,
-                                                      ),
-                                                      Row(
-                                                        children: [
-                                                          Container(
-                                                              height: 15,
-                                                              width: 15,
-                                                              decoration: BoxDecoration(
-                                                                  borderRadius:
-                                                                      const BorderRadius
-                                                                              .all(
-                                                                          Radius.circular(
-                                                                              5)),
-                                                                  color: AppColors
-                                                                      .LightRedFAF2EE,
-                                                                  border: Border.all(
-                                                                      color: AppColors
-                                                                          .DeepYelowF37226)),
-                                                              child: Center(
-                                                                  child: Text(
-                                                                provider
-                                                                    .orderDetailsList!
-                                                                    .invoiceDetailsViewModels![
-                                                                        i]
-                                                                    .quantity!
-                                                                    .toInt()
-                                                                    .toString(),
-                                                                style: TextStyle(
-                                                                    color: AppColors
-                                                                        .DeepYelowF37226,
-                                                                    fontSize:
-                                                                        10),
-                                                              ))),
-                                                          //const SizedBox(width: 10,),
-                                                          //Text("2 Kg  (8/Kg)",style: TextStyle(color: AppColors.gray8383,fontSize:9),overflow: TextOverflow.ellipsis,)
-                                                        ],
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ],
+                                                ),
                                               ),
-                                              Row(
+                                            ),
+                                            const SizedBox(
+                                              width: 8,
+                                            ),
+                                            Expanded(
+                                              flex: 6,
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
                                                 children: [
                                                   Text(
-                                                    "AED",
+                                                    "${provider.orderDetailsList!.invoiceDetailsViewModels![i].productName} ",
                                                     style: TextStyle(
                                                         color: AppColors
                                                             .defaultblack,
-                                                        fontSize: 8),
+                                                        fontSize: 13),
+                                                    maxLines: 4,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
                                                   ),
                                                   const SizedBox(
-                                                    width: 5,
+                                                    height: 8,
                                                   ),
-                                                  Text(
-                                                    "${provider.orderDetailsList!.invoiceDetailsViewModels![i].price}",
-                                                    style: TextStyle(
-                                                      color:
-                                                          AppColors.Blue077C9E,
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                    maxLines: 2,
-                                                  )
+                                                  Container(
+                                                      height: 15,
+                                                      width: 15,
+                                                      decoration: BoxDecoration(
+                                                          borderRadius:
+                                                              const BorderRadius
+                                                                      .all(
+                                                                  Radius
+                                                                      .circular(
+                                                                          5)),
+                                                          color: AppColors
+                                                              .LightRedFAF2EE,
+                                                          border: Border.all(
+                                                              color: AppColors
+                                                                  .DeepYelowF37226)),
+                                                      child: Center(
+                                                          child: Text(
+                                                        provider
+                                                            .orderDetailsList!
+                                                            .invoiceDetailsViewModels![
+                                                                i]
+                                                            .quantity!
+                                                            .toInt()
+                                                            .toString(),
+                                                        style: TextStyle(
+                                                            color: AppColors
+                                                                .DeepYelowF37226,
+                                                            fontSize: 10),
+                                                      ))),
                                                 ],
                                               ),
-                                            ],
-                                          ),
+                                            ),
+                                            const SizedBox(
+                                              width: 8,
+                                            ),
+                                            Expanded(
+                                                flex: 2,
+                                                child: Text(
+                                                  " AED 23${provider.orderDetailsList!.invoiceDetailsViewModels![i].price}",
+                                                  style: TextStyle(
+                                                    color: AppColors.Blue077C9E,
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                  maxLines: 4,
+                                                )),
+                                          ],
                                         ),
-                                        Container(
-                                            child: Divider(
+                                        Divider(
                                           color: AppColors.grayDBDBDB,
                                           thickness: 2,
-                                        )),
+                                        ),
                                       ],
                                     );
                                   }),

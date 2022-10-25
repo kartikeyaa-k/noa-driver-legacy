@@ -1,12 +1,11 @@
 import 'dart:convert';
 import 'dart:typed_data';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'dart:developer' as dev;
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:noa_driver/core/helpers/app_helpers.dart';
-import 'package:noa_driver/core/models/order_model/order_update_request_model.dart';
 import 'package:noa_driver/core/models/primary_order_models/primary_order_model.dart';
 import 'package:noa_driver/core/models/sub_community_model.dart';
 import 'package:noa_driver/locator/locator.dart';
@@ -208,31 +207,6 @@ class OrderController extends ChangeNotifier {
     LatLng latLng = LatLng(position.latitude, position.longitude);
     // print("lat ${latLng.latitude}  and lang ${latLng.longitude}");
     driverLocationInput(driverId, latLng, subCommunityId);
-
-    // CameraPosition cameraPosition = CameraPosition(target:latLng,zoom: 14 );
-    // controller!.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
-    //
-    // setState(() {
-    //   marker= Marker(
-    //     markerId: MarkerId("Homee"),
-    //     position: latLng,
-    //     rotation: _currentPosition!.heading,
-    //     draggable: false,
-    //     zIndex: 3,
-    //     flat: true,
-    //     anchor: Offset(0.5,0.5),
-    //     icon: BitmapDescriptor.fromBytes(imagedata),
-    //
-    //   );
-    //   circle= Circle(
-    //       circleId: CircleId("radius"),
-    //       radius: _currentPosition!.accuracy,
-    //       zIndex: 1,
-    //       strokeColor: Colors.blue,
-    //       center: latLng,
-    //       fillColor: Colors.blue.withAlpha(70)
-    //   );
-    // });
   }
 
   driverLocationInput(
@@ -950,14 +924,62 @@ class OrderController extends ChangeNotifier {
 
     // {
 //    "fireBaseToken":null,
-//    "topic":"/topics/dev-6",
+//    "topic":"/topics/dev-1-All", staging
+//    "topic":"/topics/1-All", production
 //    "title":"Noa Market",
 //    "body":"Our Fresh Market 1 is in Maple 4 right now! \nClick here to purchase and enjoy near instant delivery.",
 //    "userId":null,
 //    "isSpecificUser":false,
 //    "onClickAction":"string",
-//    "subComunityId":6,
+//    "subComunityId":234,
 //    "userType":1
+//    "isSendAll" : true (default false),
+//    "cummunityId" : 2 (default null)
+// }
+
+    var response = await _orderRepo.sendNotificationToCustomer(
+      requestModel: request,
+    );
+
+    var temp = response;
+    return true;
+  }
+
+  Future<bool> sendNotificationToAllUnderCommunity({
+    String? firebaseToken,
+    required String topic,
+    required String title,
+    required String body,
+    required int subComunityId,
+    required int communityId,
+  }) async {
+    Map<String, dynamic> request = {
+      "fireBaseToken": null,
+      "userId": null,
+      "isSpecificUser": false,
+      "onClickAction": "string",
+      "userType": 1,
+      "subComunityId": subComunityId,
+      "topic": topic,
+      "title": title,
+      "body": body,
+      "isSendAll": true,
+      "communityId": communityId,
+    };
+
+    // {
+//    "fireBaseToken":null,
+//    "topic":"/topics/dev-1-All", staging
+//    "topic":"/topics/1-All", production
+//    "title":"Noa Market",
+//    "body":"Our Fresh Market 1 is in Maple 4 right now! \nClick here to purchase and enjoy near instant delivery.",
+//    "userId":null,
+//    "isSpecificUser":false,
+//    "onClickAction":"string",
+//    "subComunityId":234,
+//    "userType":1
+//    "isSendAll" : true (default false),
+//    "cummunityId" : 2 (default null)
 // }
 
     var response = await _orderRepo.sendNotificationToCustomer(

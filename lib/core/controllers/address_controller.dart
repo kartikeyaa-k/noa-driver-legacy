@@ -36,7 +36,23 @@ class AddressController extends ChangeNotifier {
   Future<List<SubCommunityModel>> getAllSubCommunities() async {
     try {
       var response = await _addressRepository.getSubCommunities();
-      subCommunityList = response.data;
+
+      var listForSort = response.data;
+
+      SubCommunityModel? allModel;
+
+      for (var element in listForSort) {
+        if (element.name == 'All') {
+          allModel = element;
+        }
+      }
+
+      if (allModel != null) {
+        listForSort.removeWhere((element) => element.id == allModel!.id);
+        listForSort.add(allModel);
+      }
+
+      subCommunityList = listForSort;
     } catch (e) {
       // ignore: avoid_print
       print(

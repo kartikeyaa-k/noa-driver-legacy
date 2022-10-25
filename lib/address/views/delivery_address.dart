@@ -1,6 +1,7 @@
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:noa_driver/components/buttons/primary_button.dart';
 import 'package:noa_driver/components/snackbar/primary_snackbar.dart';
 import 'package:noa_driver/core/controllers/address_controller.dart';
 import 'package:noa_driver/core/environments/base_config.dart';
@@ -227,37 +228,84 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
                   ),
 
                   // const Spacer(),
-                  GestureDetector(
+
+                  PrimaryButton(
                     onTap: () async {
-                      if (communityId != null) {
-                        String? subCommunityId;
-                        String? subCommunityName;
+                      if (communityId != null &&
+                          currentSelectedSubCommunityFromDropdown != null &&
+                          currentSelectedCommunityName != null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          getSnackBar(
+                            'Please wait...',
+                          ),
+                        );
 
-                        if (currentSelectedSubCommunityFromDropdown == null) {
-                          subCommunityId = communityId;
-                          subCommunityName = currentSelectedCommunityName;
+                        String subCommunityId;
+                        String subCommunityName;
+
+                        subCommunityId =
+                            currentSelectedSubCommunityFromDropdown!.id;
+                        subCommunityName =
+                            currentSelectedSubCommunityFromDropdown!.name;
+
+                        var supplierName =
+                            provider.custommerLogin?.supplierName;
+
+                        var body =
+                            "Our $supplierName is in $currentSelectedCommunityName right now! Click here to purchase and enjoy near instant delivery.";
+                        var title = 'Noa Market';
+
+                        if (currentSelectedSubCommunityFromDropdown!.name
+                                .toLowerCase() ==
+                            'all') {
+                          // Broadcast to ALL under community
+                          var toSendCommunity =
+                              currentSelectedSubCommunityFromDropdown!
+                                      .communityId +
+                                  '-All';
+                          var env = Environment().config.envType;
+                          if (env == EnvironmentType.dev) {
+                            toSendCommunity = EnvironmentType.dev.name +
+                                '-' +
+                                toSendCommunity;
+                          }
+                          await Provider.of<OrderController>(context,
+                                  listen: false)
+                              .sendNotificationToAllUnderCommunity(
+                            title: title,
+                            body: body,
+                            subComunityId: int.parse(subCommunityId),
+                            communityId: int.parse(
+                                currentSelectedSubCommunityFromDropdown!
+                                    .communityId),
+                            topic: '/topics/$toSendCommunity',
+                          )
+                              .then((value) {
+                            if (value) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                getSnackBar(
+                                  env == EnvironmentType.dev
+                                      ? '(DEV) Notification sent to All under $currentSelectedCommunityName '
+                                      : 'Notification sent to all members at $currentSelectedCommunityName',
+                                ),
+                              );
+
+                              widget.onSubmitAddress(
+                                  subCommunityName,
+                                  currentSelectedCommunityName ?? '',
+                                  subCommunityId);
+
+                              Navigator.of(context).pop();
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                getSnackBar(
+                                  'Failed to send notification to All members at $currentSelectedCommunityName',
+                                ),
+                              );
+                            }
+                          });
                         } else {
-                          subCommunityId =
-                              currentSelectedSubCommunityFromDropdown!.id;
-                          subCommunityName =
-                              currentSelectedSubCommunityFromDropdown!.name;
-                        }
-
-                        if (subCommunityId == null) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            getSnackBar(
-                              'Failed to send notification, Failed to fetch community details.',
-                            ),
-                          );
-                        } else {
-                          var supplierName =
-                              provider.custommerLogin?.supplierName;
-
-                          var body =
-                              "Our $supplierName is in $subCommunityName right now! Click here to purchase and enjoy near instant delivery.";
-                          var title = 'Noa Market';
-
-                          // var toSendSubCommunity = '/topics/${subCommunityId}';
+                          // Broadcast to selected subcommunity
                           var toSendSubCommunity = subCommunityId;
                           var env = Environment().config.envType;
                           if (env == EnvironmentType.dev) {
@@ -303,22 +351,10 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
                         }
                       }
                     },
-                    child: Container(
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            color: Paints.primaryBlueDarker),
-                        padding: const EdgeInsets.all(8),
-                        margin: const EdgeInsets.only(top: 16),
-                        width: 100,
-                        child: const Text(
-                          "Confirm",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              color: Paints.background,
-                              fontSize: 17,
-                              fontWeight: FontWeight.w600),
-                        )),
+                    text: currentSelectedSubCommunityFromDropdown != null
+                        ? 'Broadcast to ${currentSelectedSubCommunityFromDropdown!.name}'
+                        : 'Broadcast',
+                    backgroundColor: Paints.primaryBlueDarker,
                   ),
                 ],
               )));

@@ -1,12 +1,9 @@
 import 'dart:async';
 import 'dart:io';
-
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:noa_driver/address/views/delivery_address.dart';
 import 'package:noa_driver/app-colors/app-colors.dart';
 import 'package:noa_driver/components/buttons/primary_button.dart';
@@ -21,8 +18,6 @@ import 'package:noa_driver/utils/date-time-utils.dart';
 import 'package:noa_driver/utils/nav_utils.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
-
-import '../order-confirmation/order_confirmation_driver_page.dart';
 import 'inventory.dart';
 import 'order-controller.dart';
 import 'order-details.dart';
@@ -111,7 +106,7 @@ class _HomeState extends State<Home> {
   }
 
   void startFetchingOrderDetailsAtInterval() {
-    _timer = Timer.periodic(const Duration(seconds: 10), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 15), (timer) {
       print(
           '============================================= FETCHING ORDERS AT 10s(${timer.tick}) ===============================================');
       if (timer.tick > 2) {
