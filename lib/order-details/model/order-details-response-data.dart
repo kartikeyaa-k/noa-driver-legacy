@@ -1408,9 +1408,9 @@ class InvoiceDetailsViewModels {
         smallImage = json['smallImage'],
         fileLocation = Environment().config.envType == EnvironmentType.dev
             ? (json['fileLocation'] as String)
-                    .contains('http://3.28.195.139:8080/')
+                    .contains('https://staging.noa.market/')
                 ? json['fileLocation'] as String
-                : 'http://3.28.195.139:8080/' + json['fileLocation']
+                : 'https://staging.noa.market/' + json['fileLocation']
             : (json['fileLocation'] as String)
                     .contains('http://admin.noa.market/')
                 ? json['fileLocation'] as String

@@ -198,7 +198,8 @@ class OrderController extends ChangeNotifier {
     return await Geolocator.getCurrentPosition();
   }
 
-  Future<void> locatePosition(int driverId, String? subCommunityId) async {
+  Future<void> locatePosition(
+      int driverId, List<SubCommunityModel> subCommunityIds) async {
     //Uint8List imagedata = await getMarkerMyCurrentPosition();
     Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
@@ -206,18 +207,42 @@ class OrderController extends ChangeNotifier {
     currentPosition = position;
     LatLng latLng = LatLng(position.latitude, position.longitude);
     // print("lat ${latLng.latitude}  and lang ${latLng.longitude}");
-    driverLocationInput(driverId, latLng, subCommunityId);
+    // driverLocationInput(driverId, latLng, subCommunityId);
+    setNewLocationForDriver(driverId, latLng, subCommunityIds);
   }
 
-  driverLocationInput(
-      int driverId, LatLng latLng, String? subCommunityId) async {
+  // driverLocationInput(
+  //     int driverId, LatLng latLng, String? subCommunityId) async {
+  //   var data = BodyDriverLocationInput(
+  //       storeId: driverId,
+  //       latitued: "${latLng.latitude != 0 ? latLng.latitude : ""}",
+  //       longitued: "${latLng.longitude != 0 ? latLng.longitude : ""}",
+  //       previousLatitued: "${latLng.latitude != 0 ? latLng.latitude : ""}",
+  //       previousLongitued: "${latLng.longitude != 0 ? latLng.longitude : ""}",
+  //       subCommunityId: '12');
+  //   // "onlineAtSubCommunities" -> null
+
+  //   var apiresponse = await _orderRepo.driverUpdateLocation(data);
+  //   if (apiresponse.httpCode == 200) {
+  //     driverLocationStatus = apiresponse.data;
+  //   }
+  //   notifyListeners();
+  // }
+
+  setNewLocationForDriver(int driverId, LatLng latLng,
+      List<SubCommunityModel> selectedSubCommunities) async {
+    List<int> selectedSubCommunitiesIds =
+        selectedSubCommunities.map((e) => int.parse(e.id)).toList();
     var data = BodyDriverLocationInput(
-        storeId: driverId,
-        latitued: "${latLng.latitude != 0 ? latLng.latitude : ""}",
-        longitued: "${latLng.longitude != 0 ? latLng.longitude : ""}",
-        previousLatitued: "${latLng.latitude != 0 ? latLng.latitude : ""}",
-        previousLongitued: "${latLng.longitude != 0 ? latLng.longitude : ""}",
-        subCommunityId: subCommunityId);
+      storeId: driverId,
+      latitued: "${latLng.latitude != 0 ? latLng.latitude : ""}",
+      longitued: "${latLng.longitude != 0 ? latLng.longitude : ""}",
+      previousLatitued: "${latLng.latitude != 0 ? latLng.latitude : ""}",
+      previousLongitued: "${latLng.longitude != 0 ? latLng.longitude : ""}",
+      subCommunityId: 'selectedSubCommunities',
+      selectedSubCommunities: selectedSubCommunitiesIds,
+    );
+    // "onlineAtSubCommunities" -> null
 
     var apiresponse = await _orderRepo.driverUpdateLocation(data);
     if (apiresponse.httpCode == 200) {

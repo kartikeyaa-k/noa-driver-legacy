@@ -1,6 +1,9 @@
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
+import 'package:multi_select_flutter/util/multi_select_item.dart';
+import 'package:multi_select_flutter/util/multi_select_list_type.dart';
 import 'package:noa_driver/components/buttons/primary_button.dart';
 import 'package:noa_driver/components/snackbar/primary_snackbar.dart';
 import 'package:noa_driver/core/controllers/address_controller.dart';
@@ -24,7 +27,7 @@ class DeliveryAddressPage extends StatefulWidget {
   }) : super(key: key);
 
   final String driverId;
-  final Function(String, String, String) onSubmitAddress;
+  final Function(String, List<SubCommunityModel>) onSubmitAddress;
   @override
   State<DeliveryAddressPage> createState() => _DeliveryAddressPageState();
 }
@@ -34,12 +37,13 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
   String? communityId;
   String? currentSelectedCommunityName;
 
-  final _formKey = GlobalKey<FormState>();
+  GlobalKey<FormState> formKey = GlobalKey<FormState>();
   bool showErrorMessage = false;
   late List<CommunityModel> communityList = [];
   late List<SubCommunityModel> subCommunityList = [];
   late List<SubCommunityModel> subCommunityListAsPerSelectedCommunity = [];
   SubCommunityModel? currentSelectedSubCommunityFromDropdown;
+  List<SubCommunityModel> currentlySelectedMultiSubCommunityFromDropdow = [];
   CommunityModel? currentSelectedCommunityFromDropdown;
   bool isCommunityOrSubcommunityLoading = true;
 
@@ -116,12 +120,14 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
                         ),
                         padding: const EdgeInsets.all(16),
                         child: Form(
-                          key: _formKey,
+                          key: formKey,
                           child: Column(
                             children: [
                               const SizedBox(
                                 height: 16,
                               ),
+
+                              // COMMUNTIY
                               DropdownSearch<CommunityModel>(
                                 compareFn: (item1, item2) =>
                                     item1.name == item2.name,
@@ -156,6 +162,10 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
 
                                     currentSelectedSubCommunityFromDropdown =
                                         null;
+
+                                    currentlySelectedMultiSubCommunityFromDropdow
+                                        .clear();
+
                                     subCommunityListAsPerSelectedCommunity
                                         .clear();
 
@@ -170,40 +180,92 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
                                 items: communityList,
                               ),
                               const SizedBox(height: 16),
-                              DropdownSearch<SubCommunityModel>(
-                                compareFn: (item1, item2) =>
-                                    item1.id == item2.id,
-                                popupProps: PopupProps.menu(
-                                  fit: FlexFit.loose,
-                                  showSearchBox: true,
-                                  showSelectedItems: true,
-                                  disabledItemFn: (SubCommunityModel s) =>
-                                      s.name.startsWith('#'),
-                                  menuProps: const MenuProps(
-                                    animationDuration:
-                                        Duration(microseconds: 100),
+
+                              // SUBCOMMUNITY
+                              // DropdownSearch<SubCommunityModel>(
+                              //   compareFn: (item1, item2) =>
+                              //       item1.id == item2.id,
+                              //   popupProps: PopupProps.menu(
+                              //     fit: FlexFit.loose,
+                              //     showSearchBox: true,
+                              //     showSelectedItems: true,
+                              //     disabledItemFn: (SubCommunityModel s) =>
+                              //         s.name.startsWith('#'),
+                              //     menuProps: const MenuProps(
+                              //       animationDuration:
+                              //           Duration(microseconds: 100),
+                              //     ),
+                              //   ),
+                              //   dropdownDecoratorProps: DropDownDecoratorProps(
+                              //     dropdownSearchDecoration:
+                              //         DropdownStyle.dropdownPrimaryStyle(
+                              //             currentSelectedCommunityName != null
+                              //                 ? 'Select a Sub-Community for $currentSelectedCommunityName'
+                              //                 : 'First Select a Community'),
+                              //   ),
+                              //   selectedItem:
+                              //       currentSelectedSubCommunityFromDropdown,
+                              //   itemAsString: (SubCommunityModel u) => u.name,
+                              //   onChanged:
+                              //       (SubCommunityModel? selectedSubCommunity) {
+                              //     if (selectedSubCommunity != null) {
+                              //       setState(() {
+                              //         currentSelectedSubCommunityFromDropdown =
+                              //             selectedSubCommunity;
+                              //       });
+                              //     }
+                              //   },
+                              //   items: subCommunityListAsPerSelectedCommunity,
+                              // ),
+
+                              MultiSelectDialogField<SubCommunityModel>(
+                                initialValue:
+                                    currentlySelectedMultiSubCommunityFromDropdow,
+                                separateSelectedItems: true,
+                                items: subCommunityListAsPerSelectedCommunity
+                                    .map((e) => MultiSelectItem(e, e.name))
+                                    .toList(),
+                                listType: MultiSelectListType.CHIP,
+                                onConfirm: (values) {},
+                                onSaved: (newSelectedSubCommunity) {
+                                  currentlySelectedMultiSubCommunityFromDropdow
+                                      .clear();
+
+                                  newSelectedSubCommunity?.forEach((element) {
+                                    if (currentSelectedCommunityFromDropdown
+                                            ?.id ==
+                                        element.communityId) {
+                                      currentlySelectedMultiSubCommunityFromDropdow
+                                          .add(element);
+                                    }
+                                  });
+
+                                  setState(() {});
+                                },
+                                selectedColor: Paints.primary,
+                                itemsTextStyle: TextStyles.body16x400,
+                                selectedItemsTextStyle: TextStyles.body16x400
+                                    .copyWith(color: Paints.background),
+                                decoration: BoxDecoration(
+                                  color: Colors.transparent,
+                                  borderRadius: const BorderRadius.all(
+                                      Radius.circular(8)),
+                                  border: Border.all(
+                                    color: Paints.grey,
                                   ),
                                 ),
-                                dropdownDecoratorProps: DropDownDecoratorProps(
-                                  dropdownSearchDecoration:
-                                      DropdownStyle.dropdownPrimaryStyle(
-                                          currentSelectedCommunityName != null
-                                              ? 'Select a Sub-Community for $currentSelectedCommunityName'
-                                              : 'First Select a Community'),
+                                buttonIcon: const Icon(
+                                  Icons.category,
+                                  color: Paints.primary,
                                 ),
-                                selectedItem:
-                                    currentSelectedSubCommunityFromDropdown,
-                                itemAsString: (SubCommunityModel u) => u.name,
-                                onChanged:
-                                    (SubCommunityModel? selectedCommunity) {
-                                  if (selectedCommunity != null) {
-                                    setState(() {
-                                      currentSelectedSubCommunityFromDropdown =
-                                          selectedCommunity;
-                                    });
-                                  }
-                                },
-                                items: subCommunityListAsPerSelectedCommunity,
+                                buttonText: Text(
+                                  'Select a Sub-Community',
+                                  style: TextStyles.body14x400.copyWith(
+                                      color: Paints.grey,
+                                      backgroundColor: Colors.transparent),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ),
                               const SizedBox(
                                 height: 16,
@@ -226,136 +288,212 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
                       ),
                     ),
                   ),
-
-                  // const Spacer(),
-
                   PrimaryButton(
-                    onTap: () async {
-                      if (communityId != null &&
-                          currentSelectedSubCommunityFromDropdown != null &&
-                          currentSelectedCommunityName != null) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          getSnackBar(
-                            'Please wait...',
-                          ),
-                        );
+                      onTap: () async {
+                        formKey.currentState!.save();
+                        if (currentlySelectedMultiSubCommunityFromDropdow
+                                .isNotEmpty &&
+                            currentSelectedCommunityFromDropdown != null) {
+                          // Please Wait
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            getSnackBar(
+                              'Please wait...',
+                            ),
+                          );
 
-                        String subCommunityId;
-                        String subCommunityName;
+                          // Constant Data
+                          var title = 'Noa Market';
+                          var supplierName =
+                              provider.custommerLogin?.supplierName;
 
-                        subCommunityId =
-                            currentSelectedSubCommunityFromDropdown!.id;
-                        subCommunityName =
-                            currentSelectedSubCommunityFromDropdown!.name;
+                          // Run through the loop
+                          // Send notification to each subcommunity
+                          for (var singleSubCommunity
+                              in currentlySelectedMultiSubCommunityFromDropdow) {
+                            String finalSubscriptionTopic = '/topics/';
+                            var body =
+                                "Our $supplierName is in ${singleSubCommunity.name} right now! Click here to purchase and enjoy near instant delivery.";
 
-                        var supplierName =
-                            provider.custommerLogin?.supplierName;
+                            // Prepare Environment Config
+                            var env = Environment().config.envType;
 
-                        var body =
-                            "Our $supplierName is in $currentSelectedCommunityName right now! Click here to purchase and enjoy near instant delivery.";
-                        var title = 'Noa Market';
-
-                        if (currentSelectedSubCommunityFromDropdown!.name
-                                .toLowerCase() ==
-                            'all') {
-                          // Broadcast to ALL under community
-                          var toSendCommunity =
-                              currentSelectedSubCommunityFromDropdown!
-                                      .communityId +
-                                  '-All';
-                          var env = Environment().config.envType;
-                          if (env == EnvironmentType.dev) {
-                            toSendCommunity = EnvironmentType.dev.name +
-                                '-' +
-                                toSendCommunity;
-                          }
-                          await Provider.of<OrderController>(context,
-                                  listen: false)
-                              .sendNotificationToAllUnderCommunity(
-                            title: title,
-                            body: body,
-                            subComunityId: int.parse(subCommunityId),
-                            communityId: int.parse(
-                                currentSelectedSubCommunityFromDropdown!
-                                    .communityId),
-                            topic: '/topics/$toSendCommunity',
-                          )
-                              .then((value) {
-                            if (value) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                getSnackBar(
-                                  env == EnvironmentType.dev
-                                      ? '(DEV) Notification sent to All under $currentSelectedCommunityName '
-                                      : 'Notification sent to all members at $currentSelectedCommunityName',
-                                ),
-                              );
-
-                              widget.onSubmitAddress(
-                                  subCommunityName,
-                                  currentSelectedCommunityName ?? '',
-                                  subCommunityId);
-
-                              Navigator.of(context).pop();
+                            // If env == dev, then add prefix
+                            // else add communit id without prefix
+                            if (env == EnvironmentType.dev) {
+                              finalSubscriptionTopic +=
+                                  EnvironmentType.dev.name +
+                                      '-' +
+                                      singleSubCommunity.id;
                             } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                getSnackBar(
-                                  'Failed to send notification to All members at $currentSelectedCommunityName',
-                                ),
-                              );
+                              finalSubscriptionTopic += singleSubCommunity.id;
                             }
-                          });
-                        } else {
-                          // Broadcast to selected subcommunity
-                          var toSendSubCommunity = subCommunityId;
-                          var env = Environment().config.envType;
-                          if (env == EnvironmentType.dev) {
-                            toSendSubCommunity = EnvironmentType.dev.name +
-                                '-' +
-                                toSendSubCommunity;
+
+                            // Send notification API call
+                            await Provider.of<OrderController>(context,
+                                    listen: false)
+                                .sendNotificationToSubCommunityTopic(
+                                    firebaseToken: '',
+                                    userId: null,
+                                    title: title,
+                                    body: body,
+                                    subComunityId:
+                                        int.parse(singleSubCommunity.id),
+                                    topic: finalSubscriptionTopic)
+                                .then((value) {
+                              if (value) {
+                                // Notification sent
+                                if (env == EnvironmentType.dev) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    getSnackBar(
+                                      'Notification sent to $finalSubscriptionTopic',
+                                    ),
+                                  );
+                                }
+                              } else {}
+                            });
                           }
-
-                          toSendSubCommunity = '/topics/$toSendSubCommunity';
-
-                          await Provider.of<OrderController>(context,
-                                  listen: false)
-                              .sendNotificationToSubCommunityTopic(
-                                  firebaseToken: '',
-                                  userId: null,
-                                  title: title,
-                                  body: body,
-                                  subComunityId: int.parse(subCommunityId),
-                                  topic: toSendSubCommunity)
-                              .then((value) {
-                            if (value) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                getSnackBar(
-                                  env == EnvironmentType.dev
-                                      ? '(DEV) Notification to $toSendSubCommunity'
-                                      : 'Notification sent to all members at $subCommunityName',
-                                ),
-                              );
-
-                              widget.onSubmitAddress(
-                                  subCommunityName ?? '',
-                                  currentSelectedCommunityName ?? '',
-                                  subCommunityId ?? '');
-                              Navigator.of(context).pop();
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                getSnackBar(
-                                  'Failed to send notification to members at $subCommunityName',
-                                ),
-                              );
-                            }
-                          });
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            getSnackBar(
+                              'Notifications sent',
+                            ),
+                          );
+                          // End of for loop
+                          widget.onSubmitAddress(
+                              currentSelectedCommunityFromDropdown?.name ?? '',
+                              currentlySelectedMultiSubCommunityFromDropdow);
+                          Navigator.of(context).pop();
                         }
-                      }
-                    },
-                    text: currentSelectedSubCommunityFromDropdown != null
-                        ? 'Broadcast to ${currentSelectedSubCommunityFromDropdown!.name}'
-                        : 'Broadcast',
-                    backgroundColor: Paints.primaryBlueDarker,
-                  ),
+                      },
+                      text: 'Broadcast'),
+                  // const Spacer(),
+                  // CONFIRM BUTTON
+                  // PrimaryButton(
+                  //   onTap: () async {
+                  //     if (communityId != null &&
+                  //         currentSelectedSubCommunityFromDropdown != null &&
+                  //         currentSelectedCommunityName != null) {
+                  //       ScaffoldMessenger.of(context).showSnackBar(
+                  //         getSnackBar(
+                  //           'Please wait...',
+                  //         ),
+                  //       );
+
+                  //       String subCommunityId;
+                  //       String subCommunityName;
+
+                  //       subCommunityId =
+                  //           currentSelectedSubCommunityFromDropdown!.id;
+                  //       subCommunityName =
+                  //           currentSelectedSubCommunityFromDropdown!.name;
+
+                  //       var supplierName =
+                  //           provider.custommerLogin?.supplierName;
+
+                  //       var body =
+                  //           "Our $supplierName is in $subCommunityName right now! Click here to purchase and enjoy near instant delivery.";
+                  //       var title = 'Noa Market';
+
+                  //       if (currentSelectedSubCommunityFromDropdown!.name
+                  //               .toLowerCase() ==
+                  //           'all') {
+                  //         // Broadcast to ALL under community
+                  //         var toSendCommunity =
+                  //             currentSelectedSubCommunityFromDropdown!
+                  //                     .communityId +
+                  //                 '-All';
+                  //         var env = Environment().config.envType;
+                  //         if (env == EnvironmentType.dev) {
+                  //           toSendCommunity = EnvironmentType.dev.name +
+                  //               '-' +
+                  //               toSendCommunity;
+                  //         }
+                  //         await Provider.of<OrderController>(context,
+                  //                 listen: false)
+                  //             .sendNotificationToAllUnderCommunity(
+                  //           title: title,
+                  //           body: body,
+                  //           subComunityId: int.parse(subCommunityId),
+                  //           communityId: int.parse(
+                  //               currentSelectedSubCommunityFromDropdown!
+                  //                   .communityId),
+                  //           topic: '/topics/$toSendCommunity',
+                  //         )
+                  //             .then((value) {
+                  //           if (value) {
+                  //             ScaffoldMessenger.of(context).showSnackBar(
+                  //               getSnackBar(
+                  //                 env == EnvironmentType.dev
+                  //                     ? '(DEV) Notification sent to All under $currentSelectedCommunityName '
+                  //                     : 'Notification sent to all members at $currentSelectedCommunityName',
+                  //               ),
+                  //             );
+
+                  //             widget.onSubmitAddress(
+                  //                 subCommunityName,
+                  //                 currentSelectedCommunityName ?? '',
+                  //                 subCommunityId);
+
+                  //             Navigator.of(context).pop();
+                  //           } else {
+                  //             ScaffoldMessenger.of(context).showSnackBar(
+                  //               getSnackBar(
+                  //                 'Failed to send notification to All members at $currentSelectedCommunityName',
+                  //               ),
+                  //             );
+                  //           }
+                  //         });
+                  //       } else {
+                  //         // Broadcast to selected subcommunity
+                  //         var toSendSubCommunity = subCommunityId;
+                  //         var env = Environment().config.envType;
+                  //         if (env == EnvironmentType.dev) {
+                  //           toSendSubCommunity = EnvironmentType.dev.name +
+                  //               '-' +
+                  //               toSendSubCommunity;
+                  //         }
+
+                  //         toSendSubCommunity = '/topics/$toSendSubCommunity';
+
+                  //         await Provider.of<OrderController>(context,
+                  //                 listen: false)
+                  //             .sendNotificationToSubCommunityTopic(
+                  //                 firebaseToken: '',
+                  //                 userId: null,
+                  //                 title: title,
+                  //                 body: body,
+                  //                 subComunityId: int.parse(subCommunityId),
+                  //                 topic: toSendSubCommunity)
+                  //             .then((value) {
+                  //           if (value) {
+                  //             ScaffoldMessenger.of(context).showSnackBar(
+                  //               getSnackBar(
+                  //                 env == EnvironmentType.dev
+                  //                     ? '(DEV) Notification to $toSendSubCommunity'
+                  //                     : 'Notification sent to all members at $subCommunityName',
+                  //               ),
+                  //             );
+
+                  //             // widget.onSubmitAddress(
+                  //             //     subCommunityName ?? '',
+                  //             //     currentSelectedCommunityName ?? '',
+                  //             //     subCommunityId ?? '');
+                  //             Navigator.of(context).pop();
+                  //           } else {
+                  //             ScaffoldMessenger.of(context).showSnackBar(
+                  //               getSnackBar(
+                  //                 'Failed to send notification to members at $subCommunityName',
+                  //               ),
+                  //             );
+                  //           }
+                  //         });
+                  //       }
+                  //     }
+                  //   },
+                  //   text: currentSelectedSubCommunityFromDropdown != null
+                  //       ? 'Broadcast to ${currentSelectedSubCommunityFromDropdown!.name}'
+                  //       : 'Broadcast',
+                  //   backgroundColor: Paints.primaryBlueDarker,
+                  // ),
                 ],
               )));
     });

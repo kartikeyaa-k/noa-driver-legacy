@@ -5,15 +5,16 @@ class BodyDriverLocationInput {
   final String? latitued;
   final String? longitued;
   final String? subCommunityId;
+  final List<int> selectedSubCommunities;
 
-  BodyDriverLocationInput({
-    this.storeId,
-    this.previousLatitued,
-    this.previousLongitued,
-    this.latitued,
-    this.longitued,
-    this.subCommunityId,
-  });
+  BodyDriverLocationInput(
+      {this.storeId,
+      this.previousLatitued,
+      this.previousLongitued,
+      this.latitued,
+      this.longitued,
+      this.subCommunityId,
+      this.selectedSubCommunities = const []});
 
   BodyDriverLocationInput.fromJson(Map<String, dynamic> json)
       : storeId = json['storeId'] as int?,
@@ -21,7 +22,8 @@ class BodyDriverLocationInput {
         previousLongitued = json['previousLongitued'] as String?,
         latitued = json['latitued'] as String?,
         longitued = json['longitued'] as String?,
-        subCommunityId = json['subCommunityId'] as String?;
+        subCommunityId = json['subCommunityId'] as String?,
+        selectedSubCommunities = [];
 
   Map<String, dynamic> toJson() => {
         'storeId': storeId,
@@ -29,6 +31,6 @@ class BodyDriverLocationInput {
         'previousLongitued': previousLongitued,
         'latitued': latitued,
         'longitued': longitued,
-        'subCommunityId': subCommunityId,
+        'subCommunityId': selectedSubCommunities,
       };
 }

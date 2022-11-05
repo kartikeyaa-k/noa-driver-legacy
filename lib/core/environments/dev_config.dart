@@ -5,7 +5,7 @@ class DevConfig implements BaseConfig {
   String get apiKey => throw UnimplementedError();
 
   @override
-  String get baseUrl => 'http://3.28.195.139:8080/';
+  String get baseUrl => 'https://staging.noa.market/';
 
   @override
   int get connectTimeout => throw UnimplementedError();

@@ -400,7 +400,7 @@ class _OrderDetailsSingleItemsState extends State<OrderDetailsSingleItems> {
                                             Expanded(
                                                 flex: 2,
                                                 child: Text(
-                                                  " AED 23${provider.orderDetailsList!.invoiceDetailsViewModels![i].price}",
+                                                  " AED ${provider.orderDetailsList!.invoiceDetailsViewModels![i].price}",
                                                   style: TextStyle(
                                                     color: AppColors.Blue077C9E,
                                                     fontSize: 14,

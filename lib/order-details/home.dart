@@ -9,6 +9,7 @@ import 'package:noa_driver/app-colors/app-colors.dart';
 import 'package:noa_driver/components/buttons/primary_button.dart';
 import 'package:noa_driver/components/snackbar/primary_snackbar.dart';
 import 'package:noa_driver/core/helpers/app_helpers.dart';
+import 'package:noa_driver/core/models/sub_community_model.dart';
 import 'package:noa_driver/core/style/styles.dart';
 import 'package:noa_driver/drawer/drawer.dart';
 import 'package:noa_driver/login-registration/model/custommer-login.dart';
@@ -71,7 +72,7 @@ class _HomeState extends State<Home> {
   String dates = "";
   String currentSelectedCommunityFromDropdownName = '';
   String currentSelectedSubCommunityFromDropdownName = '';
-
+  List<SubCommunityModel> currentSelectedSubCommunity = [];
   DateTime dateTime = DateTime(2022, 03, 02);
 
   bool isOnline = false;
@@ -98,11 +99,12 @@ class _HomeState extends State<Home> {
     }
   }
 
-  Future<void> setDriverLocation(String? subCommunityId) async {
+  Future<void> setDriverLocation(
+      List<SubCommunityModel> subCommunityIds) async {
     print(
-        '==================== DRIVER LOCATION UPDATE : Setting driver subcommunity as $subCommunityId ====================');
+        '==================== DRIVER LOCATION UPDATE : Setting driver subcommunity as $subCommunityIds ====================');
     await Provider.of<OrderController>(context, listen: false)
-        .locatePosition(widget.driverLogin!.storeId!, subCommunityId);
+        .locatePosition(widget.driverLogin!.storeId!, subCommunityIds);
   }
 
   void startFetchingOrderDetailsAtInterval() {
@@ -126,7 +128,7 @@ class _HomeState extends State<Home> {
     super.initState();
     Provider.of<OrderController>(context, listen: false).determinePosition();
     startFetchingOrderDetailsAtInterval();
-    setDriverLocation(null);
+    setDriverLocation([]);
     setNotificationSubscriptionTopics();
     Provider.of<OrderController>(context, listen: false)
         .getPreviousOrderedItems(
@@ -210,7 +212,7 @@ class _HomeState extends State<Home> {
                         if (isOnline == false) {
                           currentSelectedCommunityFromDropdownName = '';
                           currentSelectedSubCommunityFromDropdownName = '';
-                          setDriverLocation(null);
+                          setDriverLocation([]);
                         }
                         // if (provider.isLocationon == true) {
                         // if (!stoppingFlag) {
@@ -257,18 +259,23 @@ class _HomeState extends State<Home> {
                               context,
                               DeliveryAddressPage(
                                 driverId: widget.DriverId.toString(),
-                                onSubmitAddress: (String subCommunityName,
-                                    String communityName,
-                                    String subCommunityId) {
+                                onSubmitAddress: (
+                                  String communityName,
+                                  List<SubCommunityModel>
+                                      currentSelectedSubCommunityFromDropdown,
+                                ) {
                                   setState(() {
                                     isOnline = true;
-                                    currentSelectedSubCommunityFromDropdownName =
-                                        subCommunityName;
                                     currentSelectedCommunityFromDropdownName =
                                         communityName;
+
+                                    currentSelectedSubCommunity.clear();
+                                    currentSelectedSubCommunity.addAll(
+                                        currentSelectedSubCommunityFromDropdown);
                                   });
 
-                                  setDriverLocation(subCommunityId);
+                                  setDriverLocation(
+                                      currentSelectedSubCommunity);
                                 },
                               ));
                         }
@@ -321,10 +328,7 @@ class _HomeState extends State<Home> {
                                     .copyWith(color: Paints.primaryBlueDarker),
                                 textAlign: TextAlign.center,
                               )
-                            else if (currentSelectedCommunityFromDropdownName ==
-                                    '' ||
-                                currentSelectedSubCommunityFromDropdownName ==
-                                    '')
+                            else if (currentSelectedSubCommunity.isEmpty)
                               Text(
                                 "No Community Selected. You are not visible to customers.",
                                 style: TextStyles.body12x400
@@ -334,11 +338,15 @@ class _HomeState extends State<Home> {
                             else
                               Center(
                                 child: Text(
-                                  currentSelectedSubCommunityFromDropdownName +
-                                      ', ' +
+                                  currentSelectedSubCommunity
+                                          .map((e) => e.name)
+                                          .toString() +
+                                      ' - ' +
                                       currentSelectedCommunityFromDropdownName,
                                   style: TextStyles.body12x400.copyWith(
                                       color: Paints.primaryBlueDarker),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                   textAlign: TextAlign.center,
                                 ),
                               ),

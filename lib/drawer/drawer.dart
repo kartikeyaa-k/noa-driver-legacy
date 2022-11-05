@@ -585,10 +585,9 @@ class _DrawerCustomState extends State<DrawerCustom> {
                       ),
                       InkWell(
                         onTap: () async {
-                          provider.driverLocationInput(
+                          provider.setNewLocationForDriver(
                               widget.driverId!.storeId!,
-                              const LatLng(0, 0),
-                              '0000');
+                              const LatLng(0, 0), []);
                           SharedPreferences prefs =
                               await SharedPreferences.getInstance();
                           await prefs.remove("logininfo").then((value) {
