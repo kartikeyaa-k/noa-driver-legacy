@@ -128,7 +128,7 @@ class _HomeState extends State<Home> {
     super.initState();
     Provider.of<OrderController>(context, listen: false).determinePosition();
     startFetchingOrderDetailsAtInterval();
-    setDriverLocation([]);
+    // setDriverLocation([]);
     setNotificationSubscriptionTopics();
     Provider.of<OrderController>(context, listen: false)
         .getPreviousOrderedItems(
@@ -159,6 +159,9 @@ class _HomeState extends State<Home> {
         _scrollDown();
       }
     });
+
+    // Set store initial status
+    setStoreStatus();
   }
 
   @override
@@ -168,6 +171,8 @@ class _HomeState extends State<Home> {
     }
     super.dispose();
   }
+
+  setStoreStatus() {}
 
   @override
   Widget build(BuildContext context) {
@@ -212,6 +217,7 @@ class _HomeState extends State<Home> {
                         if (isOnline == false) {
                           currentSelectedCommunityFromDropdownName = '';
                           currentSelectedSubCommunityFromDropdownName = '';
+                          currentSelectedSubCommunity.clear();
                           setDriverLocation([]);
                         }
                         // if (provider.isLocationon == true) {

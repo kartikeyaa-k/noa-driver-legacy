@@ -239,7 +239,9 @@ class OrderController extends ChangeNotifier {
       longitued: "${latLng.longitude != 0 ? latLng.longitude : ""}",
       previousLatitued: "${latLng.latitude != 0 ? latLng.latitude : ""}",
       previousLongitued: "${latLng.longitude != 0 ? latLng.longitude : ""}",
-      subCommunityId: 'selectedSubCommunities',
+      subCommunityId: selectedSubCommunitiesIds.isNotEmpty
+          ? selectedSubCommunitiesIds.first.toString()
+          : null,
       selectedSubCommunities: selectedSubCommunitiesIds,
     );
     // "onlineAtSubCommunities" -> null

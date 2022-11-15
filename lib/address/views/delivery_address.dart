@@ -342,13 +342,13 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
                                 .then((value) {
                               if (value) {
                                 // Notification sent
-                                if (env == EnvironmentType.dev) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    getSnackBar(
-                                      'Notification sent to $finalSubscriptionTopic',
-                                    ),
-                                  );
-                                }
+                                // if (env == EnvironmentType.dev) {
+                                //   ScaffoldMessenger.of(context).showSnackBar(
+                                //     getSnackBar(
+                                //       'Notification sent to $finalSubscriptionTopic',
+                                //     ),
+                                //   );
+                                // }
                               } else {}
                             });
                           }

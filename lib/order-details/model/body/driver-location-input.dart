@@ -31,6 +31,7 @@ class BodyDriverLocationInput {
         'previousLongitued': previousLongitued,
         'latitued': latitued,
         'longitued': longitued,
-        'subCommunityId': selectedSubCommunities,
+        'subCommunityId':
+            selectedSubCommunities.isEmpty ? null : selectedSubCommunities,
       };
 }
