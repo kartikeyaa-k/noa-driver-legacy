@@ -242,7 +242,7 @@ class OrderController extends ChangeNotifier {
       subCommunityId: selectedSubCommunitiesIds.isNotEmpty
           ? selectedSubCommunitiesIds.first.toString()
           : null,
-      selectedSubCommunities: selectedSubCommunitiesIds,
+      onlineAtSubCommunities: selectedSubCommunitiesIds,
     );
     // "onlineAtSubCommunities" -> null
 
