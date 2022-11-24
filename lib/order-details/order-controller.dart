@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:noa_driver/core/helpers/app_helpers.dart';
 import 'package:noa_driver/core/models/primary_order_models/primary_order_model.dart';
+import 'package:noa_driver/core/models/store/store_model.dart';
 import 'package:noa_driver/core/models/sub_community_model.dart';
 import 'package:noa_driver/locator/locator.dart';
 import 'package:noa_driver/login-registration/model/custommer-login.dart';
@@ -46,6 +47,50 @@ class OrderController extends ChangeNotifier {
   int previousOrderCount = 0;
   int currentOrderCount = 0;
   Position? currentPosition;
+  StoreListResponseData? currentStoreWithOnlineStatus;
+
+  Future<StoreListResponseData?> getTruckOnlineStatus(int storeId) async {
+    var apiresponse = await _orderRepo.getAllStores();
+
+    if (apiresponse.httpCode == 200) {
+      var list = apiresponse.data;
+      currentStoreWithOnlineStatus =
+          list.firstWhere((element) => element?.storeId == storeId);
+
+      if (currentStoreWithOnlineStatus != null) {
+        currentStoreWithOnlineStatus?.isOnline = false;
+        if (currentStoreWithOnlineStatus!.onlineAtSubCommunities.isNotEmpty) {
+          if (currentStoreWithOnlineStatus!.onlineAtSubCommunities.first !=
+              '') {
+            var subCommunities =
+                currentStoreWithOnlineStatus!.onlineAtSubCommunities;
+            currentStoreWithOnlineStatus?.isOnline = true;
+            // Community Name Fetch
+            // Curently not being used in the UI
+            List<SubCommunityModel> subCommunitiesOnlineList = [];
+            for (var subCommunityId in subCommunities) {
+              var model = AppHelper.getCurrentSubCommunityModelFromId(
+                  mainSubCommunityList, subCommunityId);
+              if (model != null) {
+                subCommunitiesOnlineList.add(model);
+              }
+            }
+            if (subCommunitiesOnlineList.isNotEmpty) {
+              currentStoreWithOnlineStatus?.communityName =
+                  AppHelper.getCommunityNameFromId(mainCommunityList,
+                      subCommunitiesOnlineList.first.communityId);
+
+              currentStoreWithOnlineStatus?.subCommunitiesOnlineList =
+                  subCommunitiesOnlineList;
+            }
+          }
+        }
+      }
+
+      return currentStoreWithOnlineStatus;
+    }
+    return null;
+  }
 
   getCourrentOrder(int driverId,
       {bool isFirstTime = false, String? subCommunityName}) async {
@@ -241,7 +286,7 @@ class OrderController extends ChangeNotifier {
       previousLongitued: "${latLng.longitude != 0 ? latLng.longitude : ""}",
       subCommunityId: selectedSubCommunitiesIds.isNotEmpty
           ? selectedSubCommunitiesIds.first.toString()
-          : null,
+          : '0',
       onlineAtSubCommunities: selectedSubCommunitiesIds,
     );
     // "onlineAtSubCommunities" -> null

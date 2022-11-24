@@ -12,6 +12,7 @@ import 'package:noa_driver/core/helpers/app_helpers.dart';
 import 'package:noa_driver/core/models/communities_model.dart';
 import 'package:noa_driver/core/models/sub_community_model.dart';
 import 'package:noa_driver/core/style/styles.dart';
+import 'package:noa_driver/login-registration/model/custommer-login.dart';
 import 'package:noa_driver/main.dart';
 import 'package:noa_driver/order-details/order-controller.dart';
 
@@ -24,9 +25,11 @@ class DeliveryAddressPage extends StatefulWidget {
     Key? key,
     required this.driverId,
     required this.onSubmitAddress,
+    required this.driverLogin,
   }) : super(key: key);
 
   final String driverId;
+  final DriverLogin? driverLogin;
   final Function(String, List<SubCommunityModel>) onSubmitAddress;
   @override
   State<DeliveryAddressPage> createState() => _DeliveryAddressPageState();
@@ -311,8 +314,15 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
                           for (var singleSubCommunity
                               in currentlySelectedMultiSubCommunityFromDropdow) {
                             String finalSubscriptionTopic = '/topics/';
+                            // Default
                             var body =
                                 "Our $supplierName is in ${singleSubCommunity.name} right now! Click here to purchase and enjoy near instant delivery.";
+                            // Check if there is any specific message store wants to send.
+
+                            var storeSpecificMessage =
+                                widget.driverLogin?.description;
+                            if (storeSpecificMessage != null &&
+                                storeSpecificMessage != '') {}
 
                             // Prepare Environment Config
                             var env = Environment().config.envType;

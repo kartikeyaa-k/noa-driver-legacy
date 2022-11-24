@@ -1,5 +1,6 @@
 import 'package:noa_driver/core/models/order_model/order_update_request_model.dart';
 import 'package:noa_driver/core/models/primary_order_models/primary_order_model.dart';
+import 'package:noa_driver/core/models/store/store_model.dart';
 import 'package:noa_driver/core/models/sub_community_model.dart';
 import 'package:noa_driver/http-service/api_response.dart';
 import 'package:noa_driver/http-service/http-service.dart';
@@ -17,6 +18,27 @@ import 'model/previous-order-responsedata.dart';
 
 class OrderRepository {
   final _httpService = locator<HttpService>();
+
+  Future<ApiResponse<List<StoreListResponseData?>>> getAllStores() async {
+    var apiResponse = await _httpService.getRequest(
+      ApiConstant.SERVER + ApiConstant.GET_ALL_STORES,
+    );
+
+    List<StoreListResponseData?> list = List.empty(growable: true);
+
+    if (apiResponse.httpCode == 200 && apiResponse.data.data is List) {
+      for (var element in (apiResponse.data.data as List)) {
+        list.add(
+          StoreListResponseData.fromJson(element),
+        );
+      }
+    }
+
+    return ApiResponse(
+        httpCode: apiResponse.httpCode,
+        message: apiResponse.message,
+        data: list);
+  }
 
   Future<ApiResponse<List<CurrentOrderResponseData?>>> getCourrentOrder(
     int driverId,

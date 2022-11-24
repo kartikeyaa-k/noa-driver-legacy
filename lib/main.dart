@@ -1,6 +1,8 @@
-import 'dart:convert';
+import 'dart:developer';
 
+import 'package:bloc/bloc.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -12,12 +14,44 @@ import 'package:noa_driver/splash/splash.dart';
 import 'package:provider/provider.dart';
 import 'locator/locator.dart';
 import 'login-registration/login-controller.dart';
+import 'package:flutter_smartlook/flutter_smartlook.dart';
 import 'order-details/order-controller.dart';
+
+/// Custom instance of [BlocObserver] which logs
+/// any state changes and errors.
+class AppBlocObserver extends BlocObserver {
+  @override
+  void onChange(BlocBase bloc, Change change) {
+    super.onChange(bloc, change);
+    log('onChange(${bloc.runtimeType}, $change)');
+  }
+
+  @override
+  void onError(BlocBase bloc, Object error, StackTrace stackTrace) {
+    log('onError(${bloc.runtimeType}, $error, $stackTrace)');
+    FirebaseCrashlytics.instance.recordError(
+      error,
+      stackTrace,
+      fatal: true,
+      reason: '$bloc throws error',
+    );
+    super.onError(bloc, error, stackTrace);
+  }
+}
+
+/// ----------------------------[BlocObserver]
+///
+///
+///
+///
+///
 
 List<CommunityModel> mainCommunityList = [];
 List<SubCommunityModel> mainSubCommunityList = [];
+String token = '';
 
 late FirebaseMessaging messaging;
+late FirebaseCrashlytics crashlytics;
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // If you're going to use other Firebase services in the background, such as Firestore,
   // make sure you call `initializeApp` before using other Firebase services.
@@ -34,12 +68,19 @@ Future main() async {
   await Firebase.initializeApp();
   messaging = FirebaseMessaging.instance;
 
+  crashlytics = FirebaseCrashlytics.instance;
+
+  await crashlytics.setCrashlyticsCollectionEnabled(true);
+  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+
   const environment = String.fromEnvironment(
     'ENVIRONMENT',
-    defaultValue: Environment.DEV,
+    defaultValue: Environment.PROD,
   );
 
   Environment().initConfig(environment);
+
+  Bloc.observer = AppBlocObserver();
 
   FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
     RemoteNotification? notification = message.notification;
@@ -100,8 +141,21 @@ const AndroidNotificationChannel channel = AndroidNotificationChannel(
     importance: Importance.high,
     playSound: true);
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    super.initState();
+    final SetupOptions options =
+        SetupOptionsBuilder('1f6d2021183954dea6a23436f452208c561d724f').build();
+    Smartlook.setupAndStartRecording(options);
+  }
 
   // This widget is the root of your application.
   @override
@@ -114,10 +168,12 @@ class MyApp extends StatelessWidget {
         // CONTACT KARTIKEYA
         ChangeNotifierProvider(create: (context) => AddressController()),
       ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(primarySwatch: Colors.blue, fontFamily: "Nunito"),
-        home: Splash(),
+      child: SmartlookHelperWidget(
+        child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(primarySwatch: Colors.blue, fontFamily: "Nunito"),
+          home: Splash(),
+        ),
       ),
     );
   }

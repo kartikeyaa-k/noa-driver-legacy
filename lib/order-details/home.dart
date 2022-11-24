@@ -4,6 +4,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_smartlook/flutter_smartlook.dart';
 import 'package:noa_driver/address/views/delivery_address.dart';
 import 'package:noa_driver/app-colors/app-colors.dart';
 import 'package:noa_driver/components/buttons/primary_button.dart';
@@ -103,6 +104,27 @@ class _HomeState extends State<Home> {
       List<SubCommunityModel> subCommunityIds) async {
     print(
         '==================== DRIVER LOCATION UPDATE : Setting driver subcommunity as $subCommunityIds ====================');
+    if (subCommunityIds.isEmpty) {
+      Smartlook.trackCustomEvent('driver_status', {
+        'storeID': '${widget.driverLogin?.storeId.toString()}',
+        'storeName': '${widget.driverLogin?.shopName.toString()}',
+        'isOnline': false,
+        'subCommunities': '',
+        'communityName': '',
+      });
+    } else {
+      var subCommunities =
+          currentSelectedSubCommunity.map((e) => e.name).toString();
+      var communityName = currentSelectedCommunityFromDropdownName;
+      Smartlook.trackCustomEvent('driver_status', {
+        'storeID': '${widget.driverLogin?.storeId.toString()}',
+        'storeName': '${widget.driverLogin?.shopName.toString()}',
+        'isOnline': true,
+        'subCommunities': subCommunities,
+        'communityName': communityName,
+      });
+    }
+
     await Provider.of<OrderController>(context, listen: false)
         .locatePosition(widget.driverLogin!.storeId!, subCommunityIds);
   }
@@ -123,10 +145,30 @@ class _HomeState extends State<Home> {
     });
   }
 
+  getTruckOnlineStatus() async {
+    await Provider.of<OrderController>(context, listen: false)
+        .getTruckOnlineStatus(widget.driverLogin!.storeId!)
+        .then((store) {
+      if (store != null) {
+        currentSelectedSubCommunity.clear();
+
+        setState(() {
+          isOnline = store.isOnline;
+          Provider.of<OrderController>(context, listen: false).isLocationon =
+              store.isOnline;
+          currentSelectedCommunityFromDropdownName = store.communityName;
+          currentSelectedSubCommunity
+              .addAll(store.subCommunitiesOnlineList ?? []);
+        });
+      }
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     Provider.of<OrderController>(context, listen: false).determinePosition();
+    getTruckOnlineStatus();
     startFetchingOrderDetailsAtInterval();
     // setDriverLocation([]);
     setNotificationSubscriptionTopics();
@@ -145,6 +187,7 @@ class _HomeState extends State<Home> {
       LifecycleEventHandler(
         resumeCallBack: () async => setState(
           () {
+            getTruckOnlineStatus();
             Provider.of<OrderController>(context, listen: false)
                 .getCourrentOrder(widget.driverLogin!.storeId!);
             Provider.of<OrderController>(context, listen: false)
@@ -160,8 +203,7 @@ class _HomeState extends State<Home> {
       }
     });
 
-    // Set store initial status
-    setStoreStatus();
+    setSmartlookIdentifier();
   }
 
   @override
@@ -172,7 +214,14 @@ class _HomeState extends State<Home> {
     super.dispose();
   }
 
-  setStoreStatus() {}
+  setSmartlookIdentifier() async {
+    await Smartlook.setUserIdentifier('driver & supplier data', {
+      "shopName": widget.driverLogin?.shopName.toString(),
+      "supplierName": widget.driverLogin?.supplierName.toString(),
+      'storeID': widget.driverLogin?.storeId.toString(),
+      'subcommunity': widget.driverLogin?.supplierId.toString(),
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -264,6 +313,7 @@ class _HomeState extends State<Home> {
                           NavUtils.push(
                               context,
                               DeliveryAddressPage(
+                                driverLogin: widget.driverLogin,
                                 driverId: widget.DriverId.toString(),
                                 onSubmitAddress: (
                                   String communityName,
