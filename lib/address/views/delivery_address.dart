@@ -15,8 +15,8 @@ import 'package:noa_driver/core/style/styles.dart';
 import 'package:noa_driver/login-registration/model/custommer-login.dart';
 import 'package:noa_driver/main.dart';
 import 'package:noa_driver/order-details/order-controller.dart';
-
 import 'package:provider/provider.dart';
+import 'package:html/parser.dart';
 
 class BodyAddAddress {}
 
@@ -315,14 +315,36 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
                               in currentlySelectedMultiSubCommunityFromDropdow) {
                             String finalSubscriptionTopic = '/topics/';
                             // Default
-                            var body =
+                            String body =
                                 "Our $supplierName is in ${singleSubCommunity.name} right now! Click here to purchase and enjoy near instant delivery.";
                             // Check if there is any specific message store wants to send.
 
                             var storeSpecificMessage =
                                 widget.driverLogin?.description;
                             if (storeSpecificMessage != null &&
-                                storeSpecificMessage != '') {}
+                                storeSpecificMessage != '') {
+                              final document = parse(storeSpecificMessage);
+
+                              String parsedString = (parse(document.body?.text)
+                                      .documentElement
+                                      ?.text)
+                                  .toString();
+
+                              // Supplier Name
+
+                              if (parsedString.contains("-supplierName-")) {
+                                parsedString = parsedString.replaceAll(
+                                    '-supplierName-', supplierName.toString());
+                              }
+                              // SubCommunity Name
+                              if (parsedString.contains("-subCommunityName-")) {
+                                parsedString = parsedString.replaceAll(
+                                    '-subCommunityName-',
+                                    singleSubCommunity.name);
+                              }
+
+                              body = parsedString;
+                            }
 
                             // Prepare Environment Config
                             var env = Environment().config.envType;
