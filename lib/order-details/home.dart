@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -92,7 +93,9 @@ class _HomeState extends State<Home> {
   Future<void> setNotificationSubscriptionTopics() async {
     if (widget.driverLogin != null && widget.driverLogin?.supplierId != null) {
       var supplierId = widget.driverLogin!.supplierId;
-      await messaging.subscribeToTopic(supplierId.toString()).then((value) {
+      await FirebaseMessaging.instance
+          .subscribeToTopic(supplierId.toString())
+          .then((value) {
         ScaffoldMessenger.of(context).showSnackBar(
           getSnackBar(
             'Subscribed to receive notifications',
@@ -236,9 +239,9 @@ class _HomeState extends State<Home> {
           return Scaffold(
             appBar: AppBar(
               systemOverlayStyle: const SystemUiOverlayStyle(
-                statusBarColor: Colors.white,
+                statusBarColor: Colors.transparent,
               ),
-              backgroundColor: AppColors.pureWhite,
+              backgroundColor: Paints.primaryBlueDarker,
               leading: GestureDetector(
                   onTap: () {
                     NavUtils.push(
@@ -246,18 +249,23 @@ class _HomeState extends State<Home> {
                   },
                   child: const Icon(
                     Icons.menu_rounded,
-                    color: Paints.primary,
+                    color: Paints.background,
                   )),
               title: SizedBox(
                   height: 30,
-                  child: Image.asset("assets/images/ic-noa-colored.png")),
+                  child: Image.asset(
+                    "assets/images/ic-noa-colored.png",
+                    color: Colors.white,
+                  )),
               centerTitle: true,
               // simple test to check
               actions: [
                 Transform.scale(
                   scale: 1.0,
                   child: Switch(
-                      activeColor: Paints.green,
+                      activeColor: Colors.green,
+                      activeTrackColor: Colors.black26,
+                      inactiveTrackColor: Colors.black26,
                       value: isOnline,
                       onChanged: (value) {
                         if (value == false) {
@@ -335,7 +343,7 @@ class _HomeState extends State<Home> {
                       color: isOnline ? Paints.background : Colors.black,
                     ),
                     text: '',
-                    backgroundColor: isOnline ? Paints.red : Paints.disable,
+                    backgroundColor: isOnline ? Paints.red : Colors.black26,
                   ),
                 ),
                 const SizedBox(
