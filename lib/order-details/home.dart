@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,7 @@ import 'package:noa_driver/address/views/delivery_address.dart';
 import 'package:noa_driver/app-colors/app-colors.dart';
 import 'package:noa_driver/components/buttons/primary_button.dart';
 import 'package:noa_driver/components/snackbar/primary_snackbar.dart';
+import 'package:noa_driver/core/helpers/app_dialog_helper.dart';
 import 'package:noa_driver/core/helpers/app_helpers.dart';
 import 'package:noa_driver/core/models/sub_community_model.dart';
 import 'package:noa_driver/core/style/styles.dart';
@@ -17,6 +19,7 @@ import 'package:noa_driver/login-registration/model/custommer-login.dart';
 import 'package:noa_driver/main.dart';
 import 'package:noa_driver/order-details/driver-profile.dart';
 import 'package:noa_driver/utils/date-time-utils.dart';
+import 'package:noa_driver/utils/dialogs/primary_dialog.dart';
 import 'package:noa_driver/utils/nav_utils.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -90,7 +93,9 @@ class _HomeState extends State<Home> {
   Future<void> setNotificationSubscriptionTopics() async {
     if (widget.driverLogin != null && widget.driverLogin?.supplierId != null) {
       var supplierId = widget.driverLogin!.supplierId;
-      await messaging.subscribeToTopic(supplierId.toString()).then((value) {
+      await FirebaseMessaging.instance
+          .subscribeToTopic(supplierId.toString())
+          .then((value) {
         ScaffoldMessenger.of(context).showSnackBar(
           getSnackBar(
             'Subscribed to receive notifications',
@@ -234,9 +239,9 @@ class _HomeState extends State<Home> {
           return Scaffold(
             appBar: AppBar(
               systemOverlayStyle: const SystemUiOverlayStyle(
-                statusBarColor: Colors.white,
+                statusBarColor: Colors.transparent,
               ),
-              backgroundColor: AppColors.pureWhite,
+              backgroundColor: Paints.primaryBlueDarker,
               leading: GestureDetector(
                   onTap: () {
                     NavUtils.push(
@@ -244,60 +249,55 @@ class _HomeState extends State<Home> {
                   },
                   child: const Icon(
                     Icons.menu_rounded,
-                    color: Paints.primary,
+                    color: Paints.background,
                   )),
               title: SizedBox(
                   height: 30,
-                  child: Image.asset("assets/images/ic-noa-colored.png")),
+                  child: Image.asset(
+                    "assets/images/ic-noa-colored.png",
+                    color: Colors.white,
+                  )),
               centerTitle: true,
               // simple test to check
               actions: [
                 Transform.scale(
                   scale: 1.0,
                   child: Switch(
-                      activeColor: Paints.green,
+                      activeColor: Colors.green,
+                      activeTrackColor: Colors.black26,
+                      inactiveTrackColor: Colors.black26,
                       value: isOnline,
                       onChanged: (value) {
-                        provider.isLocationon = value;
-                        setState(() {
-                          isOnline = value;
-                        });
-
-                        if (isOnline == false) {
-                          currentSelectedCommunityFromDropdownName = '';
-                          currentSelectedSubCommunityFromDropdownName = '';
-                          currentSelectedSubCommunity.clear();
-                          setDriverLocation([]);
+                        if (value == false) {
+                          PrimaryDialog(
+                              context: context,
+                              title: 'Are you sure you want go offline?',
+                              description:
+                                  'Once you do this you will have to broadcast notifications again to go online.',
+                              positiveButton: 'Ok',
+                              negativeButton: 'Cancel',
+                              positiveOnClickCallback: () {
+                                currentSelectedCommunityFromDropdownName = '';
+                                currentSelectedSubCommunityFromDropdownName =
+                                    '';
+                                currentSelectedSubCommunity.clear();
+                                setDriverLocation([]);
+                                provider.isLocationon = value;
+                                setState(() {
+                                  isOnline = value;
+                                });
+                                Navigator.pop(context);
+                              },
+                              negativeOnClickCallback: () {
+                                Navigator.pop(context);
+                              });
+                        } else {
+                          // Online
+                          provider.isLocationon = value;
+                          setState(() {
+                            isOnline = value;
+                          });
                         }
-                        // if (provider.isLocationon == true) {
-                        // if (!stoppingFlag) {
-                        //   sendingSignal();
-                        // }
-                        // } else if (provider.isLocationon == false) {
-                        // _timer!.cancel();
-
-                        // setState(() {
-                        //   stoppingFlag = false;
-                        // });
-
-                        // Provider.of<OrderController>(context, listen: false)
-                        //     .locatePosition(widget.driverLogin!.storeId!, null);
-                        // provider.driverLocationInput(
-                        //   widget.driverLogin!.storeId!,
-                        //   const LatLng(0, 0),
-                        // );
-                        // requesting again to make sure location set to null.
-                        // Future.delayed(
-                        //   const Duration(seconds: 3),
-                        //   () {
-                        // provider.driverLocationInput(
-                        //   widget.driverLogin!.storeId!,
-                        //   const LatLng(0, 0),
-                        // );
-                        //   },
-                        // );
-                        // _timer!.cancel();
-                        // }
                       }),
                 ),
                 const SizedBox(
@@ -343,7 +343,7 @@ class _HomeState extends State<Home> {
                       color: isOnline ? Paints.background : Colors.black,
                     ),
                     text: '',
-                    backgroundColor: isOnline ? Paints.red : Paints.disable,
+                    backgroundColor: isOnline ? Paints.red : Colors.black26,
                   ),
                 ),
                 const SizedBox(

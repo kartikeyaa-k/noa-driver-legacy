@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
 import 'package:noa_driver/core/environments/base_config.dart';
 import 'package:noa_driver/core/environments/server_config.dart';
+import 'package:noa_driver/main.dart';
 
 import 'api_response.dart';
 
@@ -26,7 +27,7 @@ class HttpService {
               RequestInterceptorHandler handler) async {
             options.headers = {
               "Content-Type": "application/json",
-              //"Authorization": "Bearer  $token",
+              // "Authorization": "Bearer  $token",
             };
 
             return handler.next(options); //continue
