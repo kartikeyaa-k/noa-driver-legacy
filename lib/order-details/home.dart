@@ -9,6 +9,7 @@ import 'package:noa_driver/address/views/delivery_address.dart';
 import 'package:noa_driver/app-colors/app-colors.dart';
 import 'package:noa_driver/components/buttons/primary_button.dart';
 import 'package:noa_driver/components/snackbar/primary_snackbar.dart';
+import 'package:noa_driver/core/helpers/app_dialog_helper.dart';
 import 'package:noa_driver/core/helpers/app_helpers.dart';
 import 'package:noa_driver/core/models/sub_community_model.dart';
 import 'package:noa_driver/core/style/styles.dart';
@@ -17,6 +18,7 @@ import 'package:noa_driver/login-registration/model/custommer-login.dart';
 import 'package:noa_driver/main.dart';
 import 'package:noa_driver/order-details/driver-profile.dart';
 import 'package:noa_driver/utils/date-time-utils.dart';
+import 'package:noa_driver/utils/dialogs/primary_dialog.dart';
 import 'package:noa_driver/utils/nav_utils.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -258,46 +260,36 @@ class _HomeState extends State<Home> {
                       activeColor: Paints.green,
                       value: isOnline,
                       onChanged: (value) {
-                        provider.isLocationon = value;
-                        setState(() {
-                          isOnline = value;
-                        });
-
-                        if (isOnline == false) {
-                          currentSelectedCommunityFromDropdownName = '';
-                          currentSelectedSubCommunityFromDropdownName = '';
-                          currentSelectedSubCommunity.clear();
-                          setDriverLocation([]);
+                        if (value == false) {
+                          PrimaryDialog(
+                              context: context,
+                              title: 'Are you sure you want go offline?',
+                              description:
+                                  'Once you do this you will have to broadcast notifications again to go online.',
+                              positiveButton: 'Ok',
+                              negativeButton: 'Cancel',
+                              positiveOnClickCallback: () {
+                                currentSelectedCommunityFromDropdownName = '';
+                                currentSelectedSubCommunityFromDropdownName =
+                                    '';
+                                currentSelectedSubCommunity.clear();
+                                setDriverLocation([]);
+                                provider.isLocationon = value;
+                                setState(() {
+                                  isOnline = value;
+                                });
+                                Navigator.pop(context);
+                              },
+                              negativeOnClickCallback: () {
+                                Navigator.pop(context);
+                              });
+                        } else {
+                          // Online
+                          provider.isLocationon = value;
+                          setState(() {
+                            isOnline = value;
+                          });
                         }
-                        // if (provider.isLocationon == true) {
-                        // if (!stoppingFlag) {
-                        //   sendingSignal();
-                        // }
-                        // } else if (provider.isLocationon == false) {
-                        // _timer!.cancel();
-
-                        // setState(() {
-                        //   stoppingFlag = false;
-                        // });
-
-                        // Provider.of<OrderController>(context, listen: false)
-                        //     .locatePosition(widget.driverLogin!.storeId!, null);
-                        // provider.driverLocationInput(
-                        //   widget.driverLogin!.storeId!,
-                        //   const LatLng(0, 0),
-                        // );
-                        // requesting again to make sure location set to null.
-                        // Future.delayed(
-                        //   const Duration(seconds: 3),
-                        //   () {
-                        // provider.driverLocationInput(
-                        //   widget.driverLogin!.storeId!,
-                        //   const LatLng(0, 0),
-                        // );
-                        //   },
-                        // );
-                        // _timer!.cancel();
-                        // }
                       }),
                 ),
                 const SizedBox(
