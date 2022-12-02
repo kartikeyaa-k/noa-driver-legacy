@@ -7,7 +7,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Noa Partner</string>
+	<string>noa Partner</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -23,19 +23,31 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>To take user profile image</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>This application is showing nearby grocery carrier drivers to go to locations to the users. So that users can find nearby drivers in nearby locations.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>This application is showing nearby grocery carrier drivers to go to locations of the users. So that users can find nearby drivers in nearby locations.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>This application is showing nearby grocery carrier drivers to go to locations to the users. So that users can find nearby drivers in nearby locations.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>The application does not use this feature</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>To choose user profile image</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>location</string>
+		<string>remote-notification</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>This application needs to your permission for location so that customer can see your location and place order from your stores.</string>
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>This application needs to your permission for location so that customer can see your location and place order from your stores.</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>This application needs to your permission for location so that customer can see your location and place order from your stores.</string>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
