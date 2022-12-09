@@ -93,11 +93,13 @@ Future main() async {
         notification.body,
         NotificationDetails(
           android: AndroidNotificationDetails(
-            channel.id,
-            channel.name,
+            channel.id, channel.name,
+
             // TODO add a proper drawable resource to android, for now using
             //      one that already exists in example app.
             icon: 'ic_launcher',
+            playSound: true,
+            sound: const RawResourceAndroidNotificationSound('ring'),
           ),
         ),
       );
@@ -140,6 +142,7 @@ const AndroidNotificationChannel channel = AndroidNotificationChannel(
     description:
         'This channel is used for important notifications.', // description,
     importance: Importance.high,
+    sound: RawResourceAndroidNotificationSound('ring'),
     playSound: true);
 
 class MyApp extends StatefulWidget {

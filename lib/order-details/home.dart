@@ -5,6 +5,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_smartlook/flutter_smartlook.dart';
 import 'package:noa_driver/address/views/delivery_address.dart';
 import 'package:noa_driver/app-colors/app-colors.dart';
@@ -209,6 +210,7 @@ class _HomeState extends State<Home> {
     });
 
     setSmartlookIdentifier();
+    // showTestNotification();
   }
 
   @override
@@ -220,13 +222,31 @@ class _HomeState extends State<Home> {
   }
 
   setSmartlookIdentifier() async {
-    await Smartlook.setUserIdentifier('driver & supplier data', {
+    await Smartlook.setUserIdentifier('Driver Identification', {
       "shopName": widget.driverLogin?.shopName.toString(),
       "supplierName": widget.driverLogin?.supplierName.toString(),
       'storeID': widget.driverLogin?.storeId.toString(),
       'subcommunity': widget.driverLogin?.supplierId.toString(),
     });
   }
+
+  // showTestNotification() {
+  //   flutterLocalNotificationsPlugin.show(
+  //     1,
+  //     'test',
+  //     'testBody',
+  //     NotificationDetails(
+  //       android: AndroidNotificationDetails(channel.id, channel.name,
+  //           // TODO add a proper drawable resource to android, for now using
+  //           //      one that already exists in example app.
+  //           icon: 'ic_launcher',
+  //           sound: RawResourceAndroidNotificationSound('ring'),
+  //           playSound: true,
+  //           importance: Importance.max,
+  //           priority: Priority.high),
+  //     ),
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -270,6 +290,7 @@ class _HomeState extends State<Home> {
                       onChanged: (value) {
                         if (value == false) {
                           PrimaryDialog(
+                              barrierDismissable: false,
                               context: context,
                               title: 'Are you sure you want go offline?',
                               description:
@@ -308,32 +329,47 @@ class _HomeState extends State<Home> {
                   child: PrimaryButton(
                     padding: const EdgeInsets.all(8),
                     onTap: () {
-                      if (isOnline) {
-                        if (widget.DriverId != null) {
-                          NavUtils.push(
-                              context,
-                              DeliveryAddressPage(
-                                driverLogin: widget.driverLogin,
-                                driverId: widget.DriverId.toString(),
-                                onSubmitAddress: (
-                                  String communityName,
-                                  List<SubCommunityModel>
-                                      currentSelectedSubCommunityFromDropdown,
-                                ) {
-                                  setState(() {
-                                    isOnline = true;
-                                    currentSelectedCommunityFromDropdownName =
-                                        communityName;
+                      if (currentSelectedSubCommunity.isNotEmpty) {
+                        // This means there is already selected community or subcommunity
+                        PrimaryDialog(
+                          barrierDismissable: false,
+                          context: context,
+                          title:
+                              'You are already live in ${currentSelectedSubCommunity.map((e) => e.name).toString()}',
+                          description: 'Please go offline first',
+                          positiveButton: 'Ok',
+                          positiveOnClickCallback: () {
+                            Navigator.pop(context);
+                          },
+                        );
+                      } else {
+                        if (isOnline) {
+                          if (widget.DriverId != null) {
+                            NavUtils.push(
+                                context,
+                                DeliveryAddressPage(
+                                  driverLogin: widget.driverLogin,
+                                  driverId: widget.DriverId.toString(),
+                                  onSubmitAddress: (
+                                    String communityName,
+                                    List<SubCommunityModel>
+                                        currentSelectedSubCommunityFromDropdown,
+                                  ) {
+                                    setState(() {
+                                      isOnline = true;
+                                      currentSelectedCommunityFromDropdownName =
+                                          communityName;
 
-                                    currentSelectedSubCommunity.clear();
-                                    currentSelectedSubCommunity.addAll(
-                                        currentSelectedSubCommunityFromDropdown);
-                                  });
+                                      currentSelectedSubCommunity.clear();
+                                      currentSelectedSubCommunity.addAll(
+                                          currentSelectedSubCommunityFromDropdown);
+                                    });
 
-                                  setDriverLocation(
-                                      currentSelectedSubCommunity);
-                                },
-                              ));
+                                    setDriverLocation(
+                                        currentSelectedSubCommunity);
+                                  },
+                                ));
+                          }
                         }
                       }
                     },

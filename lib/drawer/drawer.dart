@@ -10,6 +10,7 @@ import 'package:noa_driver/login-registration/login.dart';
 import 'package:noa_driver/login-registration/model/custommer-login.dart';
 import 'package:noa_driver/order-details/order-controller.dart';
 import 'package:noa_driver/utils/nav_utils.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -47,12 +48,29 @@ class _DrawerCustomState extends State<DrawerCustom> {
       return null;
   }
 
+  PackageInfo _packageInfo = PackageInfo(
+    appName: '',
+    packageName: '',
+    version: '',
+    buildNumber: '',
+    buildSignature: '',
+  );
+
   @override
   void initState() {
     Provider.of<OrderController>(context, listen: false)
         .getUserData()
         .then((value) {});
+
+    getPackageInfo();
     super.initState();
+  }
+
+  Future<void> getPackageInfo() async {
+    var info = await PackageInfo.fromPlatform();
+    setState(() {
+      _packageInfo = info;
+    });
   }
 
   @override
@@ -585,9 +603,9 @@ class _DrawerCustomState extends State<DrawerCustom> {
                       ),
                       InkWell(
                         onTap: () async {
-                          provider.setNewLocationForDriver(
-                              widget.driverId!.storeId!,
-                              const LatLng(0, 0), []);
+                          // provider.setNewLocationForDriver(
+                          //     widget.driverId!.storeId!,
+                          //     const LatLng(0, 0), []);
                           SharedPreferences prefs =
                               await SharedPreferences.getInstance();
                           await prefs.remove("logininfo").then((value) {
@@ -653,6 +671,41 @@ class _DrawerCustomState extends State<DrawerCustom> {
                       ),
                       SizedBox(
                         height: 15,
+                      ),
+
+                      Container(
+                        margin: EdgeInsets.only(left: 20, right: 20),
+                        padding: EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                            color: AppColors.BlueF2FAFF,
+                            border: Border.all(color: AppColors.Blue276184)
+                            //color: Colors.red
+                            ),
+                        child: Row(
+                          children: [
+                            SizedBox(
+                              width: 5,
+                            ),
+                            Icon(Icons.verified_user_outlined),
+                            SizedBox(
+                              width: 20,
+                            ),
+                            Text(
+                              "Version : ${_packageInfo.version} + ${_packageInfo.buildNumber}",
+                              style: TextStyle(
+                                  color: AppColors.defaultblack,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w600),
+                            ),
+                            Spacer(),
+                            Image.asset(
+                                "assets/images/ic-arrow-right-blue.png"),
+                            SizedBox(
+                              width: 5,
+                            )
+                          ],
+                        ),
                       ),
                     ],
                   ),

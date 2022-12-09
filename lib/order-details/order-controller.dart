@@ -991,7 +991,7 @@ class OrderController extends ChangeNotifier {
       "isSpecificUser": false,
       "onClickAction": "string",
       "subComunityId": subComunityId,
-      "userType": 1
+      "userType": 1,
     };
 
     // {
