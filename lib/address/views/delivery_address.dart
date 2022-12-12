@@ -94,7 +94,7 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
   smartlookBroadcastEvent(String subCommunityId, String communityId,
       DateTime clickedSendBroadcastButtonDateTime) async {
     DateTime currentDateTime = DateTime.now().toLocal();
-    await Smartlook.trackCustomEvent('Broadcast Event', {
+    await Smartlook.trackCustomEvent('broadcast_event', {
       "shopName": widget.driverLogin?.shopName.toString(),
       "supplierName": widget.driverLogin?.supplierName.toString(),
       'storeID': widget.driverLogin?.storeId.toString(),
