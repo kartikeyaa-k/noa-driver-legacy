@@ -25,7 +25,7 @@ class _TruckDetailsState extends State<TruckDetails> {
   @override
   void initState() {
     Provider.of<OrderController>(context, listen: false)
-        .inventoryFilter(widget.storeId!);
+        .getInventory(widget.storeId!);
     super.initState();
   }
 
@@ -62,17 +62,15 @@ class _TruckDetailsState extends State<TruckDetails> {
                     Container(
                       margin: const EdgeInsets.only(
                           left: 20, right: 20, bottom: 30),
-                      child: provider.productFilter != null
+                      child: provider.inventoryList.isNotEmpty
                           ? Container(
                               margin: const EdgeInsets.only(
                                   left: 8, right: 8, top: 8, bottom: 8),
                               child: GridView.builder(
                                   shrinkWrap: true,
                                   physics: const NeverScrollableScrollPhysics(),
-                                  itemCount: provider.productFilter!
-                                          .productListRequestModels!.isNotEmpty
-                                      ? provider.productFilter!
-                                          .productListRequestModels!.length
+                                  itemCount: provider.inventoryList.isNotEmpty
+                                      ? provider.inventoryList.length
                                       : 0,
                                   gridDelegate:
                                       SliverGridDelegateWithFixedCrossAxisCount(
@@ -107,13 +105,15 @@ class _TruckDetailsState extends State<TruckDetails> {
                                                     BorderRadius.circular(8.0),
                                                 child: CachedNetworkImage(
                                                   imageUrl: provider
-                                                          .productFilter!
-                                                          .productListRequestModels![
-                                                              index]
-                                                          .productMasterMediaViewModels!
+                                                          .inventoryList[index]!
+                                                          .productMasterMediaViewModels
                                                           .isNotEmpty
-                                                      ? '${provider.productFilter!.productListRequestModels![index].productMasterMediaViewModels![0].fileLocation}'
-                                                      : "",
+                                                      ? provider
+                                                          .inventoryList[index]!
+                                                          .productMasterMediaViewModels[
+                                                              0]
+                                                          .fileLocation
+                                                      : '',
                                                   height: 120,
                                                   width: double.infinity,
                                                   fit: BoxFit.fill,
@@ -134,7 +134,8 @@ class _TruckDetailsState extends State<TruckDetails> {
                                             FittedBox(
                                               fit: BoxFit.fitWidth,
                                               child: Text(
-                                                "${provider.productFilter!.productListRequestModels![index].productName}",
+                                                provider.inventoryList[index]!
+                                                    .productName,
                                                 style: TextStyle(
                                                     color:
                                                         AppColors.defaultblack,
@@ -156,30 +157,45 @@ class _TruckDetailsState extends State<TruckDetails> {
                                                     style: TextStyle(
                                                         color: AppColors
                                                             .defaultblack,
-                                                        fontSize: 8)),
+                                                        fontSize: 12)),
                                                 TextSpan(
                                                     text:
-                                                        "${provider.productFilter!.productListRequestModels![index].productSubSkuRequestModels![0].price} / ${provider.productFilter!.productListRequestModels![index].productSubSkuRequestModels![0].attributeCombination}  ",
+                                                        "${provider.inventoryList[index]!.productSubSkuRequestModels[0].price} ",
                                                     style: TextStyle(
                                                         color: AppColors
                                                             .Blue077C9E,
-                                                        fontSize: 14,
+                                                        fontSize: 12,
                                                         fontWeight:
                                                             FontWeight.bold)),
+                                              ])),
+                                            ),
+                                            const SizedBox(
+                                              height: 4,
+                                            ),
+                                            FittedBox(
+                                              fit: BoxFit.fitWidth,
+                                              child: RichText(
+                                                  text: TextSpan(children: [
+                                                TextSpan(
+                                                    text: "SKU ",
+                                                    style: TextStyle(
+                                                        color: AppColors
+                                                            .defaultblack,
+                                                        fontSize: 12)),
                                                 TextSpan(
                                                     text:
-                                                        "(${provider.productFilter!.productListRequestModels![index].productSubSkuRequestModels![0].subSKU})",
+                                                        "${provider.inventoryList[index]!.productSubSkuRequestModels[0].subSku}",
                                                     style: TextStyle(
-                                                        color:
-                                                            AppColors.gray8383,
-                                                        fontSize: 7)),
+                                                        color: AppColors
+                                                            .Blue077C9E,
+                                                        fontSize: 12))
                                               ])),
                                             ),
                                             const SizedBox(
                                               height: 10,
                                             ),
                                             Text(
-                                              "${provider.productFilter!.productListRequestModels![index].productSubSkuRequestModels![0].quantity} units Left",
+                                              "${provider.inventoryList[index]!.productSubSkuRequestModels[0].quantity} Units Left",
                                               style: TextStyle(
                                                 color: AppColors.gray8383,
                                                 fontSize: 13,
@@ -191,7 +207,10 @@ class _TruckDetailsState extends State<TruckDetails> {
                                       ),
                                     );
                                   }))
-                          : const SizedBox(),
+                          : const Center(
+                              child: CircularProgressIndicator(
+                                  color: Paints.primaryBlueDarker),
+                            ),
                     ),
                   ],
                 ),

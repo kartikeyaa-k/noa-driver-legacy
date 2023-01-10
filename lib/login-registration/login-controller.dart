@@ -30,13 +30,15 @@ class CustommerLoginController extends ChangeNotifier {
       String firebaseToken) async {
     var apiresponse =
         await _login_repo.userLogin(userName, password, firebaseToken);
-    if (apiresponse.httpCode == 200) {
+    if (apiresponse.httpCode == 200 && apiresponse.data != null) {
       custommerLogin = apiresponse.data;
-      // print("CUSTOMERLOGIN"+ jsonEncode(custommerLogin));
+      SharedPreferences localStorage = await SharedPreferences.getInstance();
+      localStorage.setString('AuthorizationToken', custommerLogin!.token);
 
       return true;
-    } else
+    } else {
       return false;
+    }
   }
 
   Future<bool> postRegistration(data) async {

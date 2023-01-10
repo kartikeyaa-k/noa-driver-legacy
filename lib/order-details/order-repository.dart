@@ -6,6 +6,7 @@ import 'package:noa_driver/http-service/api_response.dart';
 import 'package:noa_driver/http-service/http-service.dart';
 import 'package:noa_driver/locator/locator.dart';
 import 'package:noa_driver/order-details/model/product_filter.dart';
+import 'package:noa_driver/order-details/model/product_response_data.dart';
 import 'package:noa_driver/utils/api-constant.dart';
 
 import 'model/body/driver-location-input.dart';
@@ -159,14 +160,32 @@ class OrderRepository {
         data: DriverLocationStatus.fromJson(apiResponse.data.data));
   }
 
-  Future<ApiResponse<ProductFilter>> inventoryFilter(FilterInput data) async {
-    var apiResponse = await _httpService.postRequest(
-        ApiConstant.SERVER + ApiConstant.PRODUCT_FILTER,
-        data: data.toJson());
+  Future<ApiResponse<List<ProductResponseData?>>> getProductsByStoreId(
+      int storeid) async {
+    var apiResponse = await _httpService.getRequest(
+        ApiConstant.SERVER +
+            ApiConstant.PRODUCT_LIST +
+            "/4" +
+            "/1" +
+            "/1" +
+            "/1",
+        qp: {"shopId": storeid.toString()});
+
+    List<ProductResponseData> list = List.empty(growable: true);
+
+    if (apiResponse.httpCode == 200 && apiResponse.data.data is List) {
+      for (var element in (apiResponse.data.data as List)) {
+        list.add(
+          ProductResponseData.fromJson(element),
+        );
+      }
+    }
+
+    list.removeWhere((e) => e.mobileAppVisibility == false);
     return ApiResponse(
         httpCode: apiResponse.httpCode,
         message: apiResponse.message,
-        data: ProductFilter.fromJson(apiResponse.data.data));
+        data: list);
   }
 
   Future<ApiResponse> updateLocationNotify(

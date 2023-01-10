@@ -1,30 +1,31 @@
 class DriverLogin {
   DriverLogin({
-     this.storeId,
-     this.supplierId,
-     this.shopName,
-     this.supplierName,
-     this.mobile,
-     this.landPhone,
-     this.email,
-     this.address,
-     this.largeImage,
-     this.mediumImage,
-     this.smallImage,
-     this.parentId,
-     this.latitued,
-     this.longitued,
-     this.description,
-     this.countryId,
-     this.stateId,
-     this.cityId,
-     this.countryImage,
-     this.isService,
-     this.previousLatitued,
-     this.previousLongitued,
-     this.distance,
-     this.distanceTime,
-     this.firebaseToken,
+    this.storeId,
+    this.supplierId,
+    this.shopName,
+    this.supplierName,
+    this.mobile,
+    this.landPhone,
+    this.email,
+    this.address,
+    this.largeImage,
+    this.mediumImage,
+    this.smallImage,
+    this.parentId,
+    this.latitued,
+    this.longitued,
+    this.description,
+    this.countryId,
+    this.stateId,
+    this.cityId,
+    this.countryImage,
+    this.isService,
+    this.previousLatitued,
+    this.previousLongitued,
+    this.distance,
+    this.distanceTime,
+    this.firebaseToken,
+    this.token = '',
   });
 
   int? storeId;
@@ -52,6 +53,7 @@ class DriverLogin {
   dynamic distance;
   dynamic distanceTime;
   dynamic firebaseToken;
+  String token;
 
   factory DriverLogin.fromJson(Map<String?, dynamic> json) => DriverLogin(
         storeId: json["storeId"],
@@ -79,6 +81,7 @@ class DriverLogin {
         distance: json["distance"],
         distanceTime: json["distanceTime"],
         firebaseToken: json["firebaseToken"],
+        token: json["token"],
       );
 
   Map<String?, dynamic> toJson() => {

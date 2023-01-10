@@ -1,115 +1,134 @@
+// ignore: file_names
 import 'dart:convert';
+import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
-import 'package:noa_driver/core/environments/base_config.dart';
+
 import 'package:noa_driver/core/environments/server_config.dart';
-import 'package:noa_driver/main.dart';
+
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'api_response.dart';
 
 class HttpService {
-  //late Dio _dio;
-  var _dio;
-  var logger = Logger();
+  HttpService({
+    required this.serverConfig,
+    required this.networkClient,
+    this.authToken,
+    required this.logger,
+  });
 
-  final _serverConfig = ServerConfig(
-    isHttps: Environment().config.isSecure,
-    baseUrl: Environment().config.baseUrl,
-  );
+  final ServerConfig serverConfig;
+  final Dio networkClient;
+  String? authToken;
+  final Logger logger;
 
-  Dio _getDio() {
-    if (_dio == null) {
-      _dio = Dio();
-
-      _dio.interceptors.add(
-        InterceptorsWrapper(
-          onRequest: (RequestOptions options,
-              RequestInterceptorHandler handler) async {
-            options.headers = {
-              "Content-Type": "application/json",
-              // "Authorization": "Bearer  $token",
-            };
-
-            return handler.next(options); //continue
-          },
-          onResponse:
-              (Response response, ResponseInterceptorHandler handler) async {
-            return handler.next(response); // continue
-          },
-          onError: (DioError e, ErrorInterceptorHandler handler) async {
-            return handler.next(e); //continue
-          },
-        ),
-      );
-      // _dio.interceptors.add(LogInterceptor(responseBody: true));
-    }
-
-    return _dio;
+  Future<void> getAuthToken() async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    authToken = localStorage.getString('AuthorizationToken');
   }
 
-  Future<ApiResponse<Response>> specialDio(
-    String route, {
-    FormData? data,
-    String? jsonData,
-    bool isurlEncoded = false,
-    Function(int sent, int total)? onProgress,
-  }) async {
-    try {
-      _getDio().options.contentType = Headers.formUrlEncodedContentType;
-      /* _getDio().options.headers= {"Content-Type":"application/json","Authorization":"Token ${ApiConst.WORKSPACETOKEN_LIVE}"};*/
+  Map<String, String> _headerConfig() {
+    var headerData = {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer  $authToken",
+      "accept": "*/*",
+    };
+    log('Headers : $headerData');
 
-      Response response = await _getDio().post(
-        route,
-        data: data,
-        options: Options(contentType: Headers.formUrlEncodedContentType),
-        onSendProgress: (int sent, int total) {
-          // print("onSendProgress $total $sent");
-          if (onProgress != null) onProgress(sent, total);
+    return headerData;
+  }
+
+  void setupInterceptor() {
+    networkClient.interceptors.add(
+      InterceptorsWrapper(
+        onRequest:
+            (RequestOptions options, RequestInterceptorHandler handler) async {
+          options.headers = _headerConfig();
+          return handler.next(options); //continue
         },
-      );
-      // print("$route : $response");
-
-      if (response.statusCode == 200) {
-        return ApiResponse(
-            httpCode: int.parse(response.statusCode.toString()),
-            data: response,
-            message: '');
-      } else {
-        return ApiResponse(
-            httpCode: int.parse(response.statusCode.toString()),
-            message: "Connection error. ${response.statusCode}",
-            data: response);
-      }
-    } on DioError catch (e) {
-      if (e.type == DioErrorType.response) {
-        // print(e.response!.data);
-        // print(e.response!.statusCode);
-        return ApiResponse(
-            httpCode: int.parse(e.response!.statusCode.toString()),
-            message: "${e.response!.statusMessage}",
-            data: e.response!.data);
-      } else {
-        // print(e.message);
-        return ApiResponse(
-            httpCode: -1,
-            message: "Connection error. ${e.message}",
-            data: e.response!.data);
-      }
-    }
+        onResponse:
+            (Response response, ResponseInterceptorHandler handler) async {
+          return handler.next(response); // continue
+        },
+        onError: (DioError e, ErrorInterceptorHandler handler) async {
+          return handler.next(e); //continue
+        },
+      ),
+    );
   }
 
+  // Future<ApiResponse<Response>> specialDio(
+  //   String route, {
+  //   FormData? data,
+  //   String? jsonData,
+  //   bool isurlEncoded = false,
+  //   Function(int sent, int total)? onProgress,
+  // }) async {
+  //   try {
+  //     _getDio().options.contentType = Headers.formUrlEncodedContentType;
+  //     /* _getDio().options.headers= {"Content-Type":"application/json","Authorization":"Token ${ApiConst.WORKSPACETOKEN_LIVE}"};*/
+
+  //     Response response = await _getDio().post(
+  //       route,
+  //       data: data,
+  //       options: Options(contentType: Headers.formUrlEncodedContentType),
+  //       onSendProgress: (int sent, int total) {
+  //         // print("onSendProgress $total $sent");
+  //         if (onProgress != null) onProgress(sent, total);
+  //       },
+  //     );
+  //     // print("$route : $response");
+
+  //     if (response.statusCode == 200) {
+  //       return ApiResponse(
+  //           httpCode: int.parse(response.statusCode.toString()),
+  //           data: response,
+  //           message: '');
+  //     } else {
+  //       return ApiResponse(
+  //           httpCode: int.parse(response.statusCode.toString()),
+  //           message: "Connection error. ${response.statusCode}",
+  //           data: response);
+  //     }
+  //   } on DioError catch (e) {
+  //     if (e.type == DioErrorType.response) {
+  //       // print(e.response!.data);
+  //       // print(e.response!.statusCode);
+  //       return ApiResponse(
+  //           httpCode: int.parse(e.response!.statusCode.toString()),
+  //           message: "${e.response!.statusMessage}",
+  //           data: e.response!.data);
+  //     } else {
+  //       // print(e.message);
+  //       return ApiResponse(
+  //           httpCode: -1,
+  //           message: "Connection error. ${e.message}",
+  //           data: e.response!.data);
+  //     }
+  //   }
+  // }
+
+  /// [GET]
+  /// requesting data
+  ///
+  ///
   Future<ApiResponse<Response>> getRequest(String route,
       {Map<String, String>? qp}) async {
     try {
       // REQUEST :
       route = route.replaceAll('https://admin.noa.market/', '');
-
       logger.wtf('REQUEST GET : --------');
-      logger.wtf('Path : ${_serverConfig.baseUrl + route}');
+      logger.wtf('Path : ${serverConfig.baseUrl + route}');
       logger.wtf('Request : $qp');
 
-      Response response = await _getDio().get(
-        _serverConfig.baseUrl + route,
+      // Check if interceptor are provided
+      // if not then setup here
+      await getAuthToken();
+      setupInterceptor();
+
+      Response response = await networkClient.get(
+        serverConfig.baseUrl + route,
         queryParameters: qp,
       );
       logger.wtf('Response GET : --------');
@@ -148,6 +167,11 @@ class HttpService {
     }
   }
 
+  /// [POST]
+  /// updating data
+  ///
+  ///
+  ///
   Future<ApiResponse<Response>> postRequest(
     String route, {
     Map<String, dynamic>? data,
@@ -155,20 +179,16 @@ class HttpService {
     bool isFormData = false,
     Function(int sent, int total)? onProgress,
   }) async {
-    _getDio().options.headers = {
-      "Content-Type": "multipart/form-data",
-      "accept": "*/*",
-    };
-
+    setupInterceptor();
     try {
       route = route.replaceAll('https://admin.noa.market/', '');
       String jsondata = jsonEncode(data);
       logger.w('REQUEST POST : --------');
-      logger.w('PATH : ${_serverConfig.baseUrl + route}');
+      logger.w('PATH : ${serverConfig.baseUrl + route}');
       logger.w('Request POST : $jsondata');
 
-      Response response = await _getDio().post(
-        _serverConfig.baseUrl + route,
+      Response response = await networkClient.post(
+        serverConfig.baseUrl + route,
         data: isFormData
             ? FormData.fromMap(data!)
             : (jsonData ?? jsonEncode(data)),
@@ -214,168 +234,168 @@ class HttpService {
     }
   }
 
-  Future<ApiResponse<Response>> postRequesturlencoded(
-    String route, {
-    FormData? data,
-    String? jsonData,
-    bool isurlEncoded = false,
-    Function(int sent, int total)? onProgress,
-  }) async {
-    try {
-      _getDio().options.contentType = Headers.formUrlEncodedContentType;
-      /* _getDio().options.headers= {"Content-Type":"application/json","Authorization":"Token ${ApiConst.WORKSPACETOKEN_LIVE}"};*/
+  // Future<ApiResponse<Response>> postRequesturlencoded(
+  //   String route, {
+  //   FormData? data,
+  //   String? jsonData,
+  //   bool isurlEncoded = false,
+  //   Function(int sent, int total)? onProgress,
+  // }) async {
+  //   try {
+  //     _getDio().options.contentType = Headers.formUrlEncodedContentType;
+  //     /* _getDio().options.headers= {"Content-Type":"application/json","Authorization":"Token ${ApiConst.WORKSPACETOKEN_LIVE}"};*/
 
-      Response response = await _getDio().post(
-        route,
-        data: data,
-        options: Options(contentType: Headers.formUrlEncodedContentType),
-        onSendProgress: (int sent, int total) {
-          // print("onSendProgress $total $sent");
-          if (onProgress != null) onProgress(sent, total);
-        },
-      );
-      // print("$route : $response");
+  //     Response response = await _getDio().post(
+  //       route,
+  //       data: data,
+  //       options: Options(contentType: Headers.formUrlEncodedContentType),
+  //       onSendProgress: (int sent, int total) {
+  //         // print("onSendProgress $total $sent");
+  //         if (onProgress != null) onProgress(sent, total);
+  //       },
+  //     );
+  //     // print("$route : $response");
 
-      if (response.statusCode == 200) {
-        return ApiResponse(
-            httpCode: int.parse(response.statusCode.toString()),
-            data: response,
-            message: '');
-      } else {
-        return ApiResponse(
-            httpCode: int.parse(response.statusCode.toString()),
-            message: "Connection error. ${response.statusCode}",
-            data: response);
-      }
-    } on DioError catch (e) {
-      if (e.type == DioErrorType.response) {
-        // print(e.response!.data);
-        // print(e.response!.statusCode);
-        return ApiResponse(
-            httpCode: int.parse(e.response!.statusCode.toString()),
-            message: "${e.response!.statusMessage}",
-            data: e.response!.data);
-      } else {
-        // print(e.message);
-        return ApiResponse(
-            httpCode: -1,
-            message: "Connection error. ${e.message}",
-            data: e.response!.data);
-      }
-    }
-  }
+  //     if (response.statusCode == 200) {
+  //       return ApiResponse(
+  //           httpCode: int.parse(response.statusCode.toString()),
+  //           data: response,
+  //           message: '');
+  //     } else {
+  //       return ApiResponse(
+  //           httpCode: int.parse(response.statusCode.toString()),
+  //           message: "Connection error. ${response.statusCode}",
+  //           data: response);
+  //     }
+  //   } on DioError catch (e) {
+  //     if (e.type == DioErrorType.response) {
+  //       // print(e.response!.data);
+  //       // print(e.response!.statusCode);
+  //       return ApiResponse(
+  //           httpCode: int.parse(e.response!.statusCode.toString()),
+  //           message: "${e.response!.statusMessage}",
+  //           data: e.response!.data);
+  //     } else {
+  //       // print(e.message);
+  //       return ApiResponse(
+  //           httpCode: -1,
+  //           message: "Connection error. ${e.message}",
+  //           data: e.response!.data);
+  //     }
+  //   }
+  // }
 
-  Future<ApiResponse<Response>> puttRequest(String route,
-      {required Map<String, dynamic> data}) async {
-    try {
-      Response response = await _getDio().put(
-        route,
-        data: jsonEncode(data),
-      );
-      // print("$route : $response");
+  // Future<ApiResponse<Response>> puttRequest(String route,
+  //     {required Map<String, dynamic> data}) async {
+  //   try {
+  //     Response response = await _getDio().put(
+  //       route,
+  //       data: jsonEncode(data),
+  //     );
+  //     // print("$route : $response");
 
-      if (response.statusCode == 200) {
-        return ApiResponse(
-            httpCode: int.parse(response.statusCode.toString()),
-            data: response,
-            message: '');
-      } else {
-        return ApiResponse(
-            httpCode: int.parse(response.statusCode.toString()),
-            message: "Connection error. ${response.statusCode}",
-            data: response.data);
-      }
-    } on DioError catch (e) {
-      if (e.type == DioErrorType.response) {
-        // print(e.response!.data);
-        // print(e.response!.statusCode);
-        return ApiResponse(
-            httpCode: int.parse(e.response!.statusCode.toString()),
-            message: "${e.response!.statusMessage}",
-            data: e.response!.data);
-      } else {
-        // print(e.message);
-        return ApiResponse(
-            httpCode: -1,
-            message: "Connection error. ${e.message}",
-            data: e.response!.data);
-      }
-    }
-  }
+  //     if (response.statusCode == 200) {
+  //       return ApiResponse(
+  //           httpCode: int.parse(response.statusCode.toString()),
+  //           data: response,
+  //           message: '');
+  //     } else {
+  //       return ApiResponse(
+  //           httpCode: int.parse(response.statusCode.toString()),
+  //           message: "Connection error. ${response.statusCode}",
+  //           data: response.data);
+  //     }
+  //   } on DioError catch (e) {
+  //     if (e.type == DioErrorType.response) {
+  //       // print(e.response!.data);
+  //       // print(e.response!.statusCode);
+  //       return ApiResponse(
+  //           httpCode: int.parse(e.response!.statusCode.toString()),
+  //           message: "${e.response!.statusMessage}",
+  //           data: e.response!.data);
+  //     } else {
+  //       // print(e.message);
+  //       return ApiResponse(
+  //           httpCode: -1,
+  //           message: "Connection error. ${e.message}",
+  //           data: e.response!.data);
+  //     }
+  //   }
+  // }
 
-  Future<ApiResponse<Response>> deleteRequest(String route,
-      {required Map<String, dynamic> data}) async {
-    try {
-      Response response = await _getDio().delete(route, queryParameters: data);
-      // print("$route : $response");
+  // Future<ApiResponse<Response>> deleteRequest(String route,
+  //     {required Map<String, dynamic> data}) async {
+  //   try {
+  //     Response response = await _getDio().delete(route, queryParameters: data);
+  //     // print("$route : $response");
 
-      if (response.statusCode == 200) {
-        return ApiResponse(
-            httpCode: int.parse(response.statusCode.toString()),
-            data: response,
-            message: '');
-      } else {
-        return ApiResponse(
-            httpCode: int.parse(response.statusCode.toString()),
-            message: "Connection error. ${response.statusCode}",
-            data: response.data);
-      }
-    } on DioError catch (e) {
-      if (e.type == DioErrorType.response) {
-        // print(e.response!.data);
-        // print(e.response!.statusCode);
-        return ApiResponse(
-            httpCode: int.parse(e.response!.statusCode.toString()),
-            message: "${e.response!.statusMessage}",
-            data: e.response!.data);
-      } else {
-        // print(e.message);
-        return ApiResponse(
-            httpCode: -1,
-            message: "Connection error. ${e.message}",
-            data: e.response!.data);
-      }
-    }
-  }
+  //     if (response.statusCode == 200) {
+  //       return ApiResponse(
+  //           httpCode: int.parse(response.statusCode.toString()),
+  //           data: response,
+  //           message: '');
+  //     } else {
+  //       return ApiResponse(
+  //           httpCode: int.parse(response.statusCode.toString()),
+  //           message: "Connection error. ${response.statusCode}",
+  //           data: response.data);
+  //     }
+  //   } on DioError catch (e) {
+  //     if (e.type == DioErrorType.response) {
+  //       // print(e.response!.data);
+  //       // print(e.response!.statusCode);
+  //       return ApiResponse(
+  //           httpCode: int.parse(e.response!.statusCode.toString()),
+  //           message: "${e.response!.statusMessage}",
+  //           data: e.response!.data);
+  //     } else {
+  //       // print(e.message);
+  //       return ApiResponse(
+  //           httpCode: -1,
+  //           message: "Connection error. ${e.message}",
+  //           data: e.response!.data);
+  //     }
+  //   }
+  // }
 
-  Future<ApiResponse<Response>> uploadImage(
-      String route, FormData formData) async {
-    /*  _getDio().options.headers= {"Content-Type":"application/json","Authorization":"Token ${ApiConst.WORKSPACETOKEN_LIVE}"};*/
-    try {
-      Response response = await _getDio().post(
-        route,
-        data: formData,
-      );
-      // print("$route : $response");
+  // Future<ApiResponse<Response>> uploadImage(
+  //     String route, FormData formData) async {
+  //   /*  _getDio().options.headers= {"Content-Type":"application/json","Authorization":"Token ${ApiConst.WORKSPACETOKEN_LIVE}"};*/
+  //   try {
+  //     Response response = await _getDio().post(
+  //       route,
+  //       data: formData,
+  //     );
+  //     // print("$route : $response");
 
-      if (response.statusCode == 200) {
-        return ApiResponse(
-            httpCode: int.parse(response.statusCode.toString()),
-            data: response,
-            message: '');
-      } else {
-        return ApiResponse(
-            httpCode: int.parse(response.statusCode.toString()),
-            message: "Connection error. ${response.statusCode}",
-            data: response.data);
-      }
-    } on DioError catch (e) {
-      if (e.type == DioErrorType.response) {
-        // print(e.response!.data);
-        // print(e.response!.statusCode);
-        return ApiResponse(
-            httpCode: int.parse(e.response!.statusCode.toString()),
-            message: "${e.response!.statusMessage}",
-            data: e.response!.data);
-      } else {
-        // print(e.message);
-        return ApiResponse(
-            httpCode: -1,
-            message: "Connection error. ${e.message}",
-            data: e.response!.data);
-      }
-    }
-  }
+  //     if (response.statusCode == 200) {
+  //       return ApiResponse(
+  //           httpCode: int.parse(response.statusCode.toString()),
+  //           data: response,
+  //           message: '');
+  //     } else {
+  //       return ApiResponse(
+  //           httpCode: int.parse(response.statusCode.toString()),
+  //           message: "Connection error. ${response.statusCode}",
+  //           data: response.data);
+  //     }
+  //   } on DioError catch (e) {
+  //     if (e.type == DioErrorType.response) {
+  //       // print(e.response!.data);
+  //       // print(e.response!.statusCode);
+  //       return ApiResponse(
+  //           httpCode: int.parse(e.response!.statusCode.toString()),
+  //           message: "${e.response!.statusMessage}",
+  //           data: e.response!.data);
+  //     } else {
+  //       // print(e.message);
+  //       return ApiResponse(
+  //           httpCode: -1,
+  //           message: "Connection error. ${e.message}",
+  //           data: e.response!.data);
+  //     }
+  //   }
+  // }
 }
 
 

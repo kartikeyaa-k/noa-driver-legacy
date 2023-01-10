@@ -1,21 +1,21 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_smartlook/flutter_smartlook.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:noa_driver/address/views/delivery_address.dart';
 import 'package:noa_driver/app-colors/app-colors.dart';
 import 'package:noa_driver/components/buttons/primary_button.dart';
 import 'package:noa_driver/components/snackbar/primary_snackbar.dart';
-import 'package:noa_driver/core/helpers/app_dialog_helper.dart';
+import 'package:noa_driver/core/controllers/address_controller.dart';
 import 'package:noa_driver/core/helpers/app_helpers.dart';
 import 'package:noa_driver/core/models/sub_community_model.dart';
 import 'package:noa_driver/core/style/styles.dart';
 import 'package:noa_driver/drawer/drawer.dart';
+import 'package:noa_driver/login-registration/login.dart';
 import 'package:noa_driver/login-registration/model/custommer-login.dart';
 import 'package:noa_driver/main.dart';
 import 'package:noa_driver/order-details/driver-profile.dart';
@@ -23,6 +23,7 @@ import 'package:noa_driver/utils/date-time-utils.dart';
 import 'package:noa_driver/utils/dialogs/primary_dialog.dart';
 import 'package:noa_driver/utils/nav_utils.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'inventory.dart';
 import 'order-controller.dart';
@@ -166,15 +167,64 @@ class _HomeState extends State<Home> {
           currentSelectedSubCommunity
               .addAll(store.subCommunitiesOnlineList ?? []);
         });
+      } else {
+        PrimaryDialog(
+            context: context,
+            title: 'Authentication Failed',
+            description: 'Please login again',
+            positiveButton: 'Okay',
+            positiveOnClickCallback: () async {
+              SharedPreferences prefs = await SharedPreferences.getInstance();
+              await prefs.remove("logininfo").then((value) {
+                Provider.of<OrderController>(context, listen: false)
+                    .getUserData();
+                setState(() {
+                  NavUtils.pushAndRemoveUntil(context, Login());
+                });
+              });
+
+              await prefs.clear();
+
+              setState(() {
+                Fluttertoast.showToast(
+                    msg: "you are loged out",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.CENTER,
+                    timeInSecForIosWeb: 1,
+                    backgroundColor: Colors.red,
+                    textColor: Colors.white,
+                    fontSize: 16.0);
+              });
+            });
       }
+    });
+  }
+
+  void getCommunitiesAndSubCommunities() async {
+    // Community
+    await Provider.of<AddressController>(context, listen: false)
+        .getAllCommunities()
+        .then((value) {
+      mainCommunityList.clear();
+      mainCommunityList = value;
+    });
+
+    // SubCommunities
+    await Provider.of<AddressController>(context, listen: false)
+        .getAllSubCommunities()
+        .then((value) {
+      mainSubCommunityList.clear();
+      mainSubCommunityList = value;
+      getTruckOnlineStatus();
     });
   }
 
   @override
   void initState() {
     super.initState();
+    getCommunitiesAndSubCommunities();
     Provider.of<OrderController>(context, listen: false).determinePosition();
-    getTruckOnlineStatus();
+
     startFetchingOrderDetailsAtInterval();
     // setDriverLocation([]);
     setNotificationSubscriptionTopics();
@@ -335,7 +385,7 @@ class _HomeState extends State<Home> {
                           barrierDismissable: false,
                           context: context,
                           title:
-                              'You are already live in ${currentSelectedSubCommunity.map((e) => e.name).toString()}',
+                              'You are already live in ${currentSelectedSubCommunity.map((e) => e.name).join(', ')}',
                           description: 'Please go offline first',
                           positiveButton: 'Ok',
                           positiveOnClickCallback: () {
@@ -432,7 +482,7 @@ class _HomeState extends State<Home> {
                                 child: Text(
                                   currentSelectedSubCommunity
                                           .map((e) => e.name)
-                                          .toString() +
+                                          .join(', ') +
                                       ' - ' +
                                       currentSelectedCommunityFromDropdownName,
                                   style: TextStyles.body12x400.copyWith(

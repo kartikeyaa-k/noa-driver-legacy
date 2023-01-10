@@ -14,6 +14,7 @@ import 'package:noa_driver/login-registration/model/custommer-login.dart';
 import 'package:noa_driver/main.dart';
 import 'package:noa_driver/order-details/model/body/filter_input.dart';
 import 'package:noa_driver/order-details/model/product_filter.dart';
+import 'package:noa_driver/order-details/model/product_response_data.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'model/body/driver-location-input.dart';
@@ -44,6 +45,7 @@ class OrderController extends ChangeNotifier {
   OrderDetails? orderDetailsList;
   DriverLocationStatus? driverLocationStatus;
   ProductFilter? productFilter;
+  List<ProductResponseData?> inventoryList = [];
   int previousOrderCount = 0;
   int currentOrderCount = 0;
   Position? currentPosition;
@@ -88,7 +90,7 @@ class OrderController extends ChangeNotifier {
       }
 
       return currentStoreWithOnlineStatus;
-    }
+    } else {}
     return null;
   }
 
@@ -298,14 +300,10 @@ class OrderController extends ChangeNotifier {
     notifyListeners();
   }
 
-  inventoryFilter(int storeId) async {
-    var data = FilterInput(
-      storeId: storeId,
-    );
-
-    var apiresponse = await _orderRepo.inventoryFilter(data);
+  getInventory(int storeId) async {
+    var apiresponse = await _orderRepo.getProductsByStoreId(storeId);
     if (apiresponse.httpCode == 200) {
-      productFilter = apiresponse.data;
+      inventoryList = apiresponse.data;
     }
     notifyListeners();
   }

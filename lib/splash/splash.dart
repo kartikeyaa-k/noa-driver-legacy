@@ -43,7 +43,7 @@ class _SplashState extends State<Splash> {
       });
     });
 
-    getCommunitiesAndSubCommunities();
+    // getCommunitiesAndSubCommunities();
     getUserData().then((value) {
       if (custommerLogin != null) {
         Future.delayed(
@@ -68,23 +68,23 @@ class _SplashState extends State<Splash> {
     super.initState();
   }
 
-  void getCommunitiesAndSubCommunities() async {
-    // Community
-    await Provider.of<AddressController>(context, listen: false)
-        .getAllCommunities()
-        .then((value) {
-      mainCommunityList.clear();
-      mainCommunityList = value;
-    });
+  // void getCommunitiesAndSubCommunities() async {
+  //   // Community
+  //   await Provider.of<AddressController>(context, listen: false)
+  //       .getAllCommunities()
+  //       .then((value) {
+  //     mainCommunityList.clear();
+  //     mainCommunityList = value;
+  //   });
 
-    // SubCommunities
-    await Provider.of<AddressController>(context, listen: false)
-        .getAllSubCommunities()
-        .then((value) {
-      mainSubCommunityList.clear();
-      mainSubCommunityList = value;
-    });
-  }
+  //   // SubCommunities
+  //   await Provider.of<AddressController>(context, listen: false)
+  //       .getAllSubCommunities()
+  //       .then((value) {
+  //     mainSubCommunityList.clear();
+  //     mainSubCommunityList = value;
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {

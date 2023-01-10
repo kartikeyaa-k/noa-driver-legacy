@@ -331,94 +331,96 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
                                         .isNotEmpty &&
                                     currentSelectedCommunityFromDropdown !=
                                         null) {
-                                  // Please Wait
-
-                                  // ScaffoldMessenger.of(context).showSnackBar(
-                                  //   getSnackBar(
-                                  //     'Please wait...',
-                                  //   ),
-                                  // );
-
-                                  // Constant Data
-                                  var title = 'Noa Market';
-                                  var supplierName =
-                                      provider.custommerLogin?.supplierName;
-
-                                  // Run through the loop
-                                  // Send notification to each subcommunity
-                                  var singleSubCommunity =
-                                      currentlySelectedMultiSubCommunityFromDropdow
-                                          .first;
-                                  String finalSubscriptionTopic = '/topics/';
-                                  // Default
-                                  String body =
-                                      "Our $supplierName is in ${singleSubCommunity.name} right now! Click here to purchase and enjoy near instant delivery.";
-
-                                  // Check if there is any specific message store wants to send.
-                                  var storeSpecificMessage =
-                                      widget.driverLogin?.description;
-                                  if (storeSpecificMessage != null &&
-                                      storeSpecificMessage != '') {
-                                    final document =
-                                        parse(storeSpecificMessage);
-
-                                    String parsedString =
-                                        (parse(document.body?.text)
-                                                .documentElement
-                                                ?.text)
-                                            .toString();
-
-                                    // Supplier Name
-
-                                    if (parsedString
-                                        .contains("-supplierName-")) {
-                                      parsedString = parsedString.replaceAll(
-                                          '-supplierName-',
-                                          supplierName.toString());
-                                    }
-                                    // SubCommunity Name
-                                    if (parsedString
-                                        .contains("-subCommunityName-")) {
-                                      parsedString = parsedString.replaceAll(
-                                          '-subCommunityName-',
-                                          singleSubCommunity.name);
-                                    }
-
-                                    body = parsedString;
-                                  }
-
-                                  // Prepare Environment Config
-                                  var env = Environment().config.envType;
-
-                                  // If env == dev, then add prefix
-                                  // else add communit id without prefix
-                                  if (env == EnvironmentType.dev) {
-                                    finalSubscriptionTopic +=
-                                        EnvironmentType.dev.name +
-                                            '-' +
-                                            singleSubCommunity.id;
-                                  } else {
-                                    finalSubscriptionTopic +=
-                                        singleSubCommunity.id;
-                                  }
-
                                   PrimaryDialog(
-                                      barrierDismissable: false,
-                                      context: context,
-                                      title:
-                                          'Please confirm below message that you are broadcasting in ${singleSubCommunity.name}',
-                                      description: body,
-                                      positiveButton: 'Send',
-                                      negativeButton: 'Cancel',
-                                      positiveOnClickCallback: () async {
-                                        var sendButtonClickedDateTime =
-                                            DateTime.now().toLocal();
-                                        Navigator.of(context).pop();
-                                        setState(() {
-                                          showScreenLoading = true;
-                                        });
-                                        // Send notification
+                                    barrierDismissable: false,
+                                    context: context,
+                                    title:
+                                        'Please confirm you are broadcasting in ${currentlySelectedMultiSubCommunityFromDropdow.map((e) => e.name).join(', ')}',
+                                    description: '',
+                                    positiveButton: 'Confirm',
+                                    negativeButton: 'Cancel',
+                                    positiveOnClickCallback: () async {
+                                      // Set Loading
+                                      var sendButtonClickedDateTime =
+                                          DateTime.now().toLocal();
+                                      Navigator.of(context).pop();
+                                      setState(() {
+                                        showScreenLoading = true;
+                                      });
 
+                                      // Constant Data
+                                      var title = 'Noa Market';
+                                      var supplierName =
+                                          provider.custommerLogin?.supplierName;
+                                      List<String>
+                                          successfullySentToSubCommunity = [];
+                                      List<String> failedSentToSubCommunity =
+                                          [];
+
+                                      /// ----------------------------------------------------------------
+                                      // FOR LOOP
+                                      for (var singleSubCommunity
+                                          in currentlySelectedMultiSubCommunityFromDropdow) {
+                                        // 1. Default
+                                        String finalSubscriptionTopic =
+                                            '/topics/';
+
+                                        String body =
+                                            "Our $supplierName is in ${singleSubCommunity.name} right now! Click here to purchase and enjoy near instant delivery.";
+
+                                        /// ----------------------------------------------------------------
+                                        /// Check if there is any specific message store wants to send.
+                                        var storeSpecificMessage =
+                                            widget.driverLogin?.description;
+                                        if (storeSpecificMessage != null &&
+                                            storeSpecificMessage != '') {
+                                          final document =
+                                              parse(storeSpecificMessage);
+
+                                          String parsedString =
+                                              (parse(document.body?.text)
+                                                      .documentElement
+                                                      ?.text)
+                                                  .toString();
+
+                                          // Supplier Name Dynamic
+                                          if (parsedString
+                                              .contains("-supplierName-")) {
+                                            parsedString =
+                                                parsedString.replaceAll(
+                                                    '-supplierName-',
+                                                    supplierName.toString());
+                                          }
+                                          // SubCommunity Name Dynamic
+                                          if (parsedString
+                                              .contains("-subCommunityName-")) {
+                                            parsedString =
+                                                parsedString.replaceAll(
+                                                    '-subCommunityName-',
+                                                    singleSubCommunity.name);
+                                          }
+
+                                          body = parsedString;
+                                        }
+
+                                        /// ----------------------------------------------------------------
+                                        // Prepare Environment Config
+                                        var env = Environment().config.envType;
+
+                                        // If env == dev, then add prefix
+                                        // else add communit id without prefix
+                                        if (env == EnvironmentType.dev) {
+                                          finalSubscriptionTopic +=
+                                              EnvironmentType.dev.name +
+                                                  '-' +
+                                                  singleSubCommunity.id;
+                                        } else {
+                                          finalSubscriptionTopic +=
+                                              singleSubCommunity.id;
+                                        }
+
+                                        /// -------------------------------
+                                        /// Actual Send Notification
                                         await Provider.of<OrderController>(
                                                 context,
                                                 listen: false)
@@ -439,47 +441,47 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
                                                   '',
                                               sendButtonClickedDateTime,
                                             );
-                                            setState(() {
-                                              showScreenLoading = false;
-                                            });
-                                            widget.onSubmitAddress(
-                                                currentSelectedCommunityFromDropdown
-                                                        ?.name ??
-                                                    '',
-                                                currentlySelectedMultiSubCommunityFromDropdow);
 
-                                            PrimaryDialog(
-                                                barrierDismissable: false,
-                                                context: context,
-                                                title:
-                                                    'Notifications sent successfully in ${singleSubCommunity.name}',
-                                                positiveButton: 'Ok',
-                                                positiveOnClickCallback: () {
-                                                  Navigator.of(context).pop();
-                                                  Navigator.of(context).pop();
-                                                });
+                                            successfullySentToSubCommunity
+                                                .add(singleSubCommunity.name);
                                           } else {
-                                            PrimaryDialog(
-                                                barrierDismissable: false,
-                                                context: context,
-                                                title:
-                                                    'Notifications failed in ${singleSubCommunity.name}',
-                                                positiveButton:
-                                                    'Please do not attempt again. Contact admin',
-                                                positiveOnClickCallback: () {
-                                                  Navigator.of(context).pop();
-                                                });
-                                            setState(() {
-                                              showScreenLoading = false;
-                                            });
-                                            Navigator.of(context).pop();
-                                            Navigator.of(context).pop();
+                                            failedSentToSubCommunity
+                                                .add(singleSubCommunity.name);
                                           }
                                         });
-                                      },
-                                      negativeOnClickCallback: () {
-                                        Navigator.pop(context);
+
+                                        /// ------------------------------
+                                        /// BELOW END OF FOR LOOP of SUB-COMMUNITIES
+                                      }
+
+                                      /// STOP LOADING
+                                      /// GO BACK TO HOME
+                                      setState(() {
+                                        showScreenLoading = false;
                                       });
+
+                                      PrimaryDialog(
+                                          barrierDismissable: false,
+                                          context: context,
+                                          title: 'Notifications result',
+                                          description:
+                                              'Success  : ${successfullySentToSubCommunity.map((e) => e).join(', ')}\nFailed : ${failedSentToSubCommunity.isNotEmpty ? failedSentToSubCommunity.map((e) => e).join(', ') : 'none'}',
+                                          positiveButton: 'Ok',
+                                          positiveOnClickCallback: () {
+                                            Navigator.of(context).pop();
+                                            Navigator.of(context).pop();
+                                          });
+
+                                      widget.onSubmitAddress(
+                                          currentSelectedCommunityFromDropdown
+                                                  ?.name ??
+                                              '',
+                                          currentlySelectedMultiSubCommunityFromDropdow);
+                                    },
+                                    negativeOnClickCallback: () {
+                                      Navigator.pop(context);
+                                    },
+                                  );
                                 }
                               },
                               text: 'Broadcast'),
